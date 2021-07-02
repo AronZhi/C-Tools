@@ -1,0 +1,16 @@
+{
+    "cmake_version": "3.8",
+    "proj": "C_Tools",
+    "build": {
+        "type": "release",
+        "cpp_standard": "11"
+    },
+    "source_code": {
+        "code": "./Common"
+    },
+    "output": {
+        "type": "static_lib",
+        "name": "C_Tools",
+        "dir": "./bin"
+    }
+}
