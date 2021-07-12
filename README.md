@@ -1,3 +1,2 @@
 # C-Tools
-* 收录了一些Cpp常用的轮子
-* 需要用P-Tools中的CMakeAsistan将proj/proj.json转换成CMakeLists
+* 收录平时积累的一些轮子（常用的和一些大神写的）
