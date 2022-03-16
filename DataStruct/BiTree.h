@@ -43,6 +43,33 @@ protected:
 		}
 	}
 
+	void _LevTraverse(std::queue<TreeNode<T>*>& out, TreeNode<T>* pRootNode)
+	{
+		if (pRootNode)
+		{
+			std::queue<TreeNode<T>*> tq;
+			tq.push(pRootNode);
+			out.push(pRootNode);
+			while (!tq.empty())
+			{
+				TreeNode<T>* pNode = tq.front();
+				TreeNode<T>* tPNode = pNode->Left();
+				if (tPNode)
+				{
+					tq.push(tPNode);
+					out.push(tPNode);
+				}
+				tPNode = pNode->Right();
+				if (tPNode)
+				{
+					tq.push(tPNode);
+					out.push(tPNode);
+				}
+				tq.pop();
+			}
+		}
+	}
+
 public:
 	BiTree(): _pRoot(nullptr) {}
 	virtual ~BiTree()
@@ -62,5 +89,6 @@ public:
 	void PreTraverse(std::queue<TreeNode<T>*>& out) { _PreTraverse(out, _pRoot); }
 	void InTraverse(std::queue<TreeNode<T>*>& out) { _InTraverse(out, _pRoot); }
 	void BakTraverse(std::queue<TreeNode<T>*>& out) { _BakTraverse(out, _pRoot); }
+	void LevTraverse(std::queue<TreeNode<T>*>& out) { _LevTraverse(out, _pRoot); }
 };
 #endif // BI_TREE_H	
