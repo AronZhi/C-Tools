@@ -3,8 +3,6 @@
 #include <Windows.h>
 #include <assert.h>
 #include <vector>
-#include <iostream>
-#include <sstream>
 
 /*
 template <class T>
