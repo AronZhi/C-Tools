@@ -2,7 +2,7 @@
 #define MEMORY_POOL
 
 #include <memory>
-#include <deque>
+#include <queue>
 #include "MemoryObj.h"
 
 template<class T>
@@ -39,7 +39,7 @@ public:
 		if (!_avaliable_ptrs.empty())
 		{
 			ret = _avaliable_ptrs.front();
-			_avaliable_ptrs.pop_front();
+			_avaliable_ptrs.pop();
 		}
 		return ret;
 	}
@@ -47,11 +47,11 @@ public:
 	void GiveBack(MemoryObj_Ptr ptr)
 	{
 		ptr->RemoveData();
-		_avaliable_ptrs.push_back(ptr);
+		_avaliable_ptrs.push(ptr);
 	}
 
 private:
-	std::deque<MemoryObj_Ptr> _avaliable_ptrs;
+	std::queue<MemoryObj_Ptr> _avaliable_ptrs;
 	MemoryObj_Ptr _mem;
 };
 
