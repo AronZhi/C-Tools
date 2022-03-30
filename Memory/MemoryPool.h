@@ -11,19 +11,19 @@ class MemoryPool
 public:
 	typedef MemoryObj<T>* MemoryObj_Ptr;
 
-	MemoryPool(int32_t obj_count) : _count(obj_count), _mem(nullptr) {}
+	MemoryPool() : _mem(nullptr) {}
 	~MemoryPool()
 	{
 		if (_mem)
 			delete[] _mem;
 	}
 
-	bool Create()
+	bool Create(int32_t obj_count)
 	{
-		_mem = new MemoryObj<T>[_count];
+		_mem = new MemoryObj<T>[obj_count];
 		if (_mem)
 		{
-			for (int i = 0; i < _count; i++)
+			for (int i = 0; i < obj_count; i++)
 			{
 				MemoryObj_Ptr ptr = _mem + i;
 				_avaliable_ptrs.push_back(ptr);
@@ -51,7 +51,6 @@ public:
 	}
 
 private:
-	int32_t _count;
 	std::deque<MemoryObj_Ptr> _avaliable_ptrs;
 	MemoryObj_Ptr _mem;
 };
