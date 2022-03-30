@@ -1,7 +1,7 @@
 #ifndef MEMORY_OBJ
 #define MEMORY_OBJ
 
-template<T>
+template<class T>
 class MemoryObj
 {
 public:
@@ -10,6 +10,8 @@ public:
 		/*remove data in member*/
 		return;
 	}
+
+	T& GetData() { return _member; }
 
 private:
 	T _member;
