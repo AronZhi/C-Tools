@@ -18,7 +18,7 @@ public:
 			delete[] _mem;
 	}
 
-	bool Create(int32_t obj_count)
+	bool RequestMemory(int32_t obj_count)
 	{
 		_mem = new MemoryObj<T>[obj_count];
 		if (_mem)
@@ -26,7 +26,7 @@ public:
 			for (int i = 0; i < obj_count; i++)
 			{
 				MemoryObj_Ptr ptr = _mem + i;
-				_avaliable_ptrs.push_back(ptr);
+				_avaliable_ptrs.push(ptr);
 			}
 			return true;
 		}

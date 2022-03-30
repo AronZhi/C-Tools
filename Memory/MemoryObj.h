@@ -5,13 +5,19 @@ template<class T>
 class MemoryObj
 {
 public:
+	MemoryObj() {}
+	MemoryObj(const MemoryObj& src): _member(src._member) {}
+	~MemoryObj() {}
+
 	void RemoveData()
 	{
 		/*remove data in member*/
 		return;
 	}
 
-	T& GetData() { return _member; }
+	T& GetDataRef() { return _member; }
+	T* GetDataPtr() { return &_member; }
+	T GetData() { return _member; }
 
 private:
 	T _member;

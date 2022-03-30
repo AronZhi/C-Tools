@@ -14,10 +14,10 @@ protected:
 		{
 			if (parent)
 			{
-				if (parent->Data() > node->Data())
-					_AddNode(node, parent->Left());
+				if (parent->DataRef() > node->DataRef())
+					_AddNode(node, parent->LeftRef());
 				else
-					_AddNode(node, parent->Right());
+					_AddNode(node, parent->RightRef());
 			}
 			else
 			{
@@ -29,10 +29,10 @@ protected:
 public:
 	SortedBiTree() {}
 
-	void AddNode(T data)
+	void AddNode(TreeNode<T>* node)
 	{
-		TreeNode<T>* node = new TreeNode<T>(data);
-		_AddNode(node, this->_pRoot);
+		if (node)
+			_AddNode(node, this->_pRoot);
 	}
 };
 
