@@ -3,14 +3,11 @@
 
 #include <memory>
 #include <queue>
-#include "MemoryObj.h"
 
 template<class T>
 class MemoryPool
 {
 public:
-	typedef MemoryObj<T>* MemoryObj_Ptr;
-
 	MemoryPool() : _mem(nullptr) {}
 	~MemoryPool()
 	{
@@ -18,14 +15,14 @@ public:
 			delete[] _mem;
 	}
 
-	bool RequestMemory(int32_t obj_count)
+	bool Malloc(int32_t obj_count)
 	{
-		_mem = new MemoryObj<T>[obj_count];
+		_mem = new T[obj_count];
 		if (_mem)
 		{
 			for (int i = 0; i < obj_count; i++)
 			{
-				MemoryObj_Ptr ptr = _mem + i;
+				T* ptr = _mem + i;
 				_avaliable_ptrs.push(ptr);
 			}
 			return true;
@@ -33,9 +30,9 @@ public:
 		return false;
 	}
 
-	MemoryObj_Ptr Fetch()
+	T* Fetch()
 	{
-		MemoryObj_Ptr ret = NULL;
+		T* ret = NULL;
 		if (!_avaliable_ptrs.empty())
 		{
 			ret = _avaliable_ptrs.front();
@@ -44,15 +41,15 @@ public:
 		return ret;
 	}
 
-	void GiveBack(MemoryObj_Ptr ptr)
+	void GiveBack(T* ptr)
 	{
-		ptr->RemoveData();
+		/* clear object data befor give back */
 		_avaliable_ptrs.push(ptr);
 	}
 
 private:
-	std::queue<MemoryObj_Ptr> _avaliable_ptrs;
-	MemoryObj_Ptr _mem;
+	std::queue<T*> _avaliable_ptrs;
+	T* _mem;
 };
 
 #endif // MEMORY_POOL
