@@ -5,7 +5,7 @@
 #include <vector>
 /*
 template <class T>
-void _QuickSort(std::vector<T>& input, int32_t start, int32_t end)
+void _QuickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
 {
 	assert(start >= 0);
 	if (start >= end)
@@ -28,14 +28,14 @@ void _QuickSort(std::vector<T>& input, int32_t start, int32_t end)
 	}
 	// 退出循环时，必定l和r位置重叠，此时交换l和base_index的位置，就能保证左边时小于基准数，右边时大于基准数 
 	swap(&(input[l]), &(input[base_index]));
-	_QuickSort<T>(input, start, l - 1);
-	_QuickSort<T>(input, l + 1, end);
+	_QuickSortRecursive<T>(input, start, l - 1);
+	_QuickSortRecursive<T>(input, l + 1, end);
 }
 
 
 // 改进swap，减少内存开销
 template <class T>
-void _QuickSort(std::vector<T>& input, int32_t start, int32_t end)
+void _QuickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
 {
 	assert(start >= 0);
 	if (start >= end)
@@ -60,13 +60,13 @@ void _QuickSort(std::vector<T>& input, int32_t start, int32_t end)
 	// 放base前，把l位置上的数放在base_index上保证数据完整 
 	input[base_index] = input[l];
 	input[l] = base;
-	_QuickSort<T>(input, start, l - 1);
-	_QuickSort<T>(input, l + 1, end);
+	_QuickSortRecursive<T>(input, start, l - 1);
+	_QuickSortRecursive<T>(input, l + 1, end);
 }
 */
 
 template <class T>
-void _QuickSort(std::vector<T>& input, int32_t start, int32_t end)
+void _QuickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
 {
 	assert(start >= 0);
 	if (start >= end)
@@ -84,14 +84,14 @@ void _QuickSort(std::vector<T>& input, int32_t start, int32_t end)
 		input[r] = input[l]; // r成为坑位存放l位置上的数，然后l因为数据已经保存成为坑位
 	}
 	input[l] = base; // 退出循环，l和r位置重合，这个位置是最后的坑位，放会base数，然后左边是小于base，右边是大于base 
-	_QuickSort<T>(input, start, l - 1);
-	_QuickSort<T>(input, l + 1, end);
+	_QuickSortRecursive<T>(input, start, l - 1);
+	_QuickSortRecursive<T>(input, l + 1, end);
 }
 
 template <class T>
 void QuickSort(std::vector<T>& input)
 {
-	_QuickSort<T>(input, 0, input.size() - 1);
+	_QuickSortRecursive<T>(input, 0, input.size() - 1);
 }
 
 template<typename T>
@@ -111,7 +111,7 @@ void _MergeSortRecursive(std::vector<T>& input, std::vector<T>& temp, int start,
 	while (start1 <= end1 && start2 <= end2)
 		temp[i++] = input[start1] < input[start2] ? input[start1++] : input[start2++];
 	// 退出条件是start1 > end1 || start2 > end2 
-	// 将剩余的数放入数组中 
+	// 递归之后,左右部分是有序数组,将剩余的数放入数组中  
 	while (start1 <= end1)
 		temp[i++] = input[start1++];
 	while (start2 <= end2)
