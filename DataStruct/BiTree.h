@@ -1,80 +1,74 @@
-#ifndef BI_TREE_H
-#define BI_TREE_H
+#ifndef BI_TREE
+#define BI_TREE
 
-#include <queue>
-#include <list>
 #include <vector>
+#include <queue>
 
-#include "TreeNode.h"
+#include "BiTreeNode.h"
 
-template <class T>
+template<class T>
 class BiTree
 {
-public:
-	TreeNode<T>* _pRoot;
-
 protected:
-	void _PreTraverse(std::queue<TreeNode<T>*>& out, TreeNode<T>* pRootNode)
+	BiTreeNode<T>* _pRoot;
+
+	void _ForwardTraverse(BiTreeNode<T>* node, std::vector<BiTreeNode<T>*>& ret)
 	{
-		if (pRootNode)
+		if (node)
 		{
-			out.push(pRootNode);
-			_PreTraverse(out, pRootNode->LeftRef());
-			_PreTraverse(out, pRootNode->RightRef());
+			ret.push_back(node);
+			_ForwardTraverse(node->_pLeft, ret);
+			_ForwardTraverse(node->_pRight, ret);
 		}
 	}
 
-	void _InTraverse(std::queue<TreeNode<T>*>& out, TreeNode<T>* pRootNode)
+	void _BackTraverse(BiTreeNode<T>* node, std::vector<BiTreeNode<T>*>& ret)
 	{
-		if (pRootNode)
+		if (node)
 		{
-			_InTraverse(out, pRootNode->LeftRef());
-			out.push(pRootNode);
-			_InTraverse(out, pRootNode->RightRef());
+			_BackTraverse(node->_pLeft, ret);
+			_BackTraverse(node->_pRight, ret);
+			ret.push_back(node);
 		}
 	}
 
-	void _BakTraverse(std::queue<TreeNode<T>*>& out, TreeNode<T>* pRootNode)
+	void _InorderTraverse(BiTreeNode<T>* node, std::vector<BiTreeNode<T>*>& ret)
 	{
-		if (pRootNode)
+		if (node)
 		{
-			_BakTraverse(out, pRootNode->LeftRef());
-			_BakTraverse(out, pRootNode->RightRef());
-			out.push(pRootNode);
+			_InorderTraverse(node->_pLeft, ret);
+			ret.push_back(node);
+			_InorderTraverse(node->_pRight, ret);
 		}
 	}
 
-	void _LevTraverse(std::vector<TreeNode<T>*>& out, TreeNode<T>* pRootNode)
+	void _LevelTraverse(BiTreeNode<T>* node, std::vector<BiTreeNode<T>*>& ret)
 	{
-		if (pRootNode)
+		if (node)
 		{
-			std::queue<TreeNode<T>*> tq;
-			tq.push(pRootNode);
-			out.push_back(pRootNode);
-			while (!tq.empty())
+			std::queue<BiTreeNode<T>*> queue;
+			queue.push(node);
+			while (!queue.empty())
 			{
-				TreeNode<T>* pNode = tq.front();
-				TreeNode<T>* tPNode = pNode->LeftRef();
-				if (tPNode)
-					tq.push(tPNode);
-				out.push_back(tPNode);
-				tPNode = pNode->RightRef();
-				if (tPNode)
-					tq.push(tPNode);
-				out.push_back(tPNode);
-				tq.pop();
+				BiTreeNode<T>* pNode = queue.front();
+				ret.push_back(pNode);
+				queue.pop();
+				if (pNode->_pLeft)
+					queue.push(pNode->_pLeft);
+				if (pNode->_pRight)
+					queue.push(pNode->_pRight);
 			}
 		}
 	}
 
 public:
-	BiTree(): _pRoot(nullptr) {}
-	virtual ~BiTree(){}
+	BiTree() : _pRoot(nullptr) {}
 
-	virtual void AddNode(TreeNode<T>* node) = 0;
-	void PreTraverse(std::queue<TreeNode<T>*>& out) { _PreTraverse(out, _pRoot); }
-	void InTraverse(std::queue<TreeNode<T>*>& out) { _InTraverse(out, _pRoot); }
-	void BakTraverse(std::queue<TreeNode<T>*>& out) { _BakTraverse(out, _pRoot); }
-	void LevTraverse(std::vector<TreeNode<T>*>& out) { _LevTraverse(out, _pRoot); }
+	virtual void Add(BiTreeNode<T>* node) = 0;
+	void ForwardTraverse(std::vector<BiTreeNode<T>*>& ret) { _ForwardTraverse(_pRoot, ret); }
+	void BackTraverse(std::vector<BiTreeNode<T>*>& ret) { _BackTraverse(_pRoot, ret); }
+	void InorderTraverse(std::vector<BiTreeNode<T>*>& ret) { _InorderTraverse(_pRoot, ret); }
+	void LevelTraverse(std::vector<BiTreeNode<T>*>& ret) { _LevelTraverse(_pRoot, ret); }
 };
-#endif // BI_TREE_H	
+
+#endif // BI_TREE
