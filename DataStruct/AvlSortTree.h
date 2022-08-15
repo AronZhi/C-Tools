@@ -199,19 +199,22 @@ public:
 			{
 				if (nullptr == p_tree->_p_left_child && nullptr == p_tree->_p_right_child)
 				{
-					/* pass */
+					/* 如果是叶子节点, 删除既可 */
+					relinkChild(nullptr, p_parent, p_tree == p_parent->_p_left_child);
 				}
 				else if (nullptr == p_tree->_p_left_child)
 				{
+					/* 如果只有左子树, 将左子树替换掉删除节点即可 */
 					relinkChild(p_tree->_p_left_child, p_parent, p_tree == p_parent->_p_left_child);
-					
 				}
 				else if (nullptr == p_tree->_p_right_child)
 				{
+					/* 如果只有右子树, 将左子树替换掉删除节点即可 */
 					relinkChild(p_tree->_p_right_child, p_parent, p_tree == p_parent->_p_left_child);
 				}
 				else
 				{
+					/* 如果只左右子树都有, 找到左子树的最右节点，替换掉删除节点 */
 					BinaryTreeNode<T>* p_tmp_1 = p_tree;
 					BinaryTreeNode<T>* p_tmp_2 = p_tree->_p_left_child;
 					while (p_tmp_2->_p_right_child)
