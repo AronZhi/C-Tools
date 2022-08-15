@@ -21,7 +21,12 @@ public:
 
 template <class T>
 class BinaryTree {
+protected:
+	BinaryTreeNode<T>* _p_root;
+
 public:
+	BinaryTree(): _p_root(nullptr) {}
+
 	virtual ~BinaryTree()
 	{
 	}
@@ -82,7 +87,7 @@ public:
 	{
 		if (p_node)
 		{
-			p_node->_n_height = std::max(updateHeight(p_node->_p_left_child), updateHeight(p_node->_p_right_child)) + 1;
+			p_node->_n_height = max(updateHeight(p_node->_p_left_child), updateHeight(p_node->_p_right_child)) + 1;
 			return p_node->_n_height;
 		}
 		else
@@ -94,9 +99,14 @@ public:
 		return p_node == nullptr ? -1 : p_node->_n_height;
 	}
 
-	virtual insert(T data) == 0;
+	BinaryTreeNode<T>* root() 
+	{ 
+		return _p_root; 
+	}
 
-	virtual remove(T data) == 0;
+	virtual BinaryTreeNode<T>* insert(T data, BinaryTreeNode<T>* p_tree = nullptr) = 0;
+
+	virtual BinaryTreeNode<T>* remove(T data, BinaryTreeNode<T>* p_tree = nullptr) = 0;
 };
 
 

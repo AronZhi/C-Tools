@@ -11,10 +11,11 @@ public:
 	~AvlSortTree()
 	{
 		std::vector<BinaryTreeNode<T>*> tree_arr;
-		levelTraverse(p_node, tree_arr);
-		count = tree_arr.size();
+		this->levelTraverse(this->root(), tree_arr);
+		int count = tree_arr.size();
 		for (int i = count - 1; i >= 0; --i)
 		{
+			printf("delete %d node", i);
 			delete tree_arr[i];
 			tree_arr[i] = nullptr;
 		}
@@ -22,6 +23,8 @@ public:
 
 	void relinkChild(BinaryTreeNode<T>* p_node, BinaryTreeNode<T>* p_parent, bool node_is_left_child)
 	{
+		if (p_node == p_parent)
+			return;
 		if (p_parent)
 		{
 			if (node_is_left_child)
@@ -138,41 +141,41 @@ public:
 	void handleUnBalance(BinaryTreeNode<T>* p_tree)
 	{
 		std::vector<BinaryTreeNode<T>*> tree_arr;
-		levelTraverse(p_node, tree_arr);
-		count = tree_arr.size();
+		this->levelTraverse(p_tree, tree_arr);
+		int count = tree_arr.size();
 		for (int i = count - 1; i >= 0; --i)
 		{
 			BinaryTreeNode<T>* p_node = tree_arr[i];
-			if (height(p_node->_p_left_child) - height(p_node->_p_right_child) > 1)
+			if (this->height(p_node->_p_left_child) - this->height(p_node->_p_right_child) > 1)
 			{
 				/* 因为AVL树是高度相差1以内的二叉搜索树，又因为失衡节点不可能会是叶子节点，
 				对于失衡节点来说，可以用顺序存储的方法计算出其父节点 */
-				if (height(p_node->_p_left_child->_p_left_child) > height(p_node->_p_left_child->_p_right_child))
+				if (this->height(p_node->_p_left_child->_p_left_child) > this->height(p_node->_p_left_child->_p_right_child))
 					handleLeftLeftUnbalance(p_node, tree_arr[(i - 1) / 2]);
 				else
 					handleLeftRightUnbalance(p_node, tree_arr[(i - 1) / 2]);
 				break;
 			}
-			else if (height(p_node->_p_left_child) - height(p_node->_p_right_child) < -1)
+			else if (this->height(p_node->_p_left_child) - this->height(p_node->_p_right_child) < -1)
 			{
-				if (height(p_node->_p_right_child->_p_left_child) > height(p_node->_p_right_child->_p_right_child))
+				if (this->height(p_node->_p_right_child->_p_left_child) > this->height(p_node->_p_right_child->_p_right_child))
 					handleRightLeftUnbalance(p_node, tree_arr[(i - 1) / 2]);
 				else
 					handleRightRightUnbalance(p_node, tree_arr[(i - 1) / 2]);
 				break;
 			}
 		}
-		updateHeight(p_tree);
+		this->updateHeight(p_tree);
 	}
 
 	int __addNode(T data, BinaryTreeNode<T>* p_tree)
 	{
 		if (p_tree)
 		{
-			if (data > p_tree->data)
-				addNode(data, p_tree->_p_right_child);
-			else if (data < p_tree->data)
-				addNode(data, p_tree->_p_left_child);
+			if (data > p_tree->_data)
+				__addNode(data, p_tree->_p_right_child);
+			else if (data < p_tree->_data)
+				__addNode(data, p_tree->_p_left_child);
 			else
 				return -1;
 		}
@@ -183,12 +186,14 @@ public:
 		return 0;
 	}
 
-	int insert(T data, BinaryTreeNode<T>* p_tree)
+	BinaryTreeNode<T>* insert(T data, BinaryTreeNode<T>* p_tree = nullptr)
 	{
-		__addNode(data, p_tree);
-		updateHeight(p_tree);
-		handleUnBalance(p_tree);
-		return 0;
+		if (0 == __addNode(data, p_tree))
+		{
+			this->updateHeight(p_tree);
+			handleUnBalance(p_tree);
+		}
+		return p_tree;
 	}
 
 	int __delNode(T data, BinaryTreeNode<T>* p_tree, BinaryTreeNode<T>* p_parent)
@@ -233,22 +238,23 @@ public:
 
 			}
 			else if (data > p_tree->_data)
-				delNode(data, p_tree->_p_right_child, p_tree);
+				__delNode(data, p_tree->_p_right_child, p_tree);
 			else
-				dleNode(data, p_tree->_p_left_child, p_tree);
+				__delNode(data, p_tree->_p_left_child, p_tree);
 		}
 		return -1;
 	}
 
-	int remove(T data, BinaryTreeNode<T>* p_tree)
+	BinaryTreeNode<T>* remove(T data, BinaryTreeNode<T>* p_tree = nullptr)
 	{
-		int ret = __delNode(data, p_tree, p_tree);
-		if (0 == ret)
+		if (nullptr == p_tree)
+			p_tree = this->root();
+		if (0 == __delNode(data, p_tree, p_tree))
 		{
-			updateHeight(p_tree);
+			this->updateHeight(p_tree);
 			handleUnBalance(p_tree);
 		}
-		return ret;
+		return p_tree;
 	}
 };
 
