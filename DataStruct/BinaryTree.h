@@ -83,15 +83,19 @@ public:
 		}
 	}
 
-	int updateHeight(BinaryTreeNode<T>* p_node)
+	int __updateHeight(BinaryTreeNode<T>*& p_node)
 	{
-		if (p_node)
+		std::vector<BinaryTreeNode<int>*> p_node_arr;
+		levelTraverse(p_node, p_node_arr);
+		int count = p_node_arr.size();
+		for (int i = count - 1; i >= 0; --i)
 		{
-			p_node->_n_height = max(updateHeight(p_node->_p_left_child), updateHeight(p_node->_p_right_child)) + 1;
-			return p_node->_n_height;
+			if (nullptr == p_node_arr[i]->_p_left_child && nullptr == p_node_arr[i]->_p_right_child)
+				p_node_arr[i]->_n_height = 0;
+			else
+				p_node_arr[i]->_n_height = max(height(p_node_arr[i]->_p_left_child), height(p_node_arr[i]->_p_right_child)) + 1;
 		}
-		else
-			return -1;
+		return p_node->_n_height;
 	}
 
 	int height(BinaryTreeNode<T>* p_node)
@@ -104,9 +108,9 @@ public:
 		return _p_root; 
 	}
 
-	virtual BinaryTreeNode<T>* insert(T data, BinaryTreeNode<T>* p_tree = nullptr) = 0;
+	virtual int insert(T data) = 0;
 
-	virtual BinaryTreeNode<T>* remove(T data, BinaryTreeNode<T>* p_tree = nullptr) = 0;
+	virtual int remove(T data) = 0;
 };
 
 

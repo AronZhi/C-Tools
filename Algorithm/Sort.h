@@ -73,7 +73,6 @@ void _QuickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
 		return;
 	T base = input[start]; // 必须用start作为坑位，否则循环内第一次交换会丢失input[start]的值 
 	int32_t l = start, r = end;
-	int t;
 	while (l < r)
 	{
 		while (input[r] >= base && r > l)

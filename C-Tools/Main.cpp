@@ -12,14 +12,24 @@
 void TestBiTree()
 {
 	AvlSortTree<int> tree;
-	tree.insert(1, nullptr);
-	tree.insert(2, nullptr);
-	tree.insert(3, nullptr);
-	std::vector<BinaryTreeNode<int>*> tree_arr;
-	tree.levelTraverse(tree.root(), tree_arr);
-	for (auto p_node : tree_arr)
-		std::cout << p_node->_data << ", ";
-	std::cout << std::endl;
+	auto show = [&]() {
+		std::vector<BinaryTreeNode<int>*> tree_arr;
+		tree.levelTraverse(tree.root(), tree_arr);
+		for (auto p_node : tree_arr)
+			std::cout << p_node->_data << ", ";
+		std::cout << std::endl;
+	};
+	tree.insert(3);
+	tree.insert(2);
+	tree.insert(1);
+	tree.insert(4);
+	tree.insert(7);
+	tree.insert(8);
+	tree.insert(9);
+	show();
+	tree.remove(8);
+	tree.remove(9);
+	show();
 }
 
 void TestQuickSort()

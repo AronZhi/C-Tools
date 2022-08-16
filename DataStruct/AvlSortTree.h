@@ -15,17 +15,18 @@ public:
 		int count = tree_arr.size();
 		for (int i = count - 1; i >= 0; --i)
 		{
-			printf("delete %d node", i);
 			delete tree_arr[i];
 			tree_arr[i] = nullptr;
 		}
 	}
 
-	void relinkChild(BinaryTreeNode<T>* p_node, BinaryTreeNode<T>* p_parent, bool node_is_left_child)
+	void __relinkChild(BinaryTreeNode<T>* p_node, BinaryTreeNode<T>* p_parent, bool node_is_left_child)
 	{
-		if (p_node == p_parent)
-			return;
-		if (p_parent)
+		if (nullptr == p_parent)
+		{
+			this->_p_root = p_node;	
+		}
+		else
 		{
 			if (node_is_left_child)
 				p_parent->_p_left_child = p_node;
@@ -34,7 +35,7 @@ public:
 		}
 	}
 
-	void rightRotate(BinaryTreeNode<T>* p_node, BinaryTreeNode<T>* p_parent, bool node_is_left_child)
+	void __rightRotate(BinaryTreeNode<T>*& p_node, BinaryTreeNode<T>* p_parent, bool node_is_left_child)
 	{
 		/*
 		*	右旋转,A右(顺时针)旋转成为B的子树。B的右子树将指向A,要先用A的左子树指向B的右子树，再让B的右子树指向A，否则会丢失掉B的右子树，其他节点不变，B成为新的根节点。
@@ -49,10 +50,10 @@ public:
 		BinaryTreeNode<T>* p_node_B = p_node->_p_left_child;
 		p_node->_p_left_child = p_node_B->_p_right_child;
 		p_node_B->_p_right_child = p_node;
-		relinkChild(p_node_B, p_parent, node_is_left_child);
+		__relinkChild(p_node_B, p_parent, node_is_left_child);
 	}
 
-	void leftRotate(BinaryTreeNode<T>* p_node, BinaryTreeNode<T>* p_parent, bool node_is_left_child)
+	void __leftRotate(BinaryTreeNode<T>*& p_node, BinaryTreeNode<T>* p_parent, bool node_is_left_child)
 	{
 		/*
 		*	左旋转,A左(逆时针)旋转成为B的子树。B的左子树将指向A，要先用A的右子树指向B的左子树，再让B的左子树指向A,否则会丢失掉B的右子树，其他节点不变，B成为新的根节点。
@@ -65,11 +66,11 @@ public:
 		// BinaryTreeNode<T>* p_node_A = p_node;
 		BinaryTreeNode<T>* p_node_B = p_node->_p_right_child;
 		p_node->_p_right_child = p_node_B->_p_left_child;
-		p_node_B->_p_right_child = p_node;
-		relinkChild(p_node_B, p_parent, node_is_left_child);
+		p_node_B->_p_left_child = p_node;
+		__relinkChild(p_node_B, p_parent, node_is_left_child);
 	}
 
-	void handleLeftLeftUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
+	void __handleLeftLeftUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
 	{
 		/*
 		* 节点是因为新节点插入了其左子树的左子树而失衡。
@@ -83,10 +84,10 @@ public:
 		* F
 		* F无论在C的左边还是右边，都这样处理
 		*/
-		rightRotate(p_unbalance_node, p_parent, p_unbalance_node == p_parent->_p_left_child);
+		__rightRotate(p_unbalance_node, p_parent, p_parent ? p_unbalance_node == p_parent->_p_left_child : false);
 	}
 
-	void handleRightRightUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
+	void __handleRightRightUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
 	{
 		/*
 		* 节点是因为新节点插入了其右子树的右子树而失衡。
@@ -100,10 +101,10 @@ public:
 		*			  F
 		* F无论在C的左边还是右边，都这样处理
 		*/
-		leftRotate(p_unbalance_node, p_parent, p_unbalance_node == p_parent->_p_left_child);
+		__leftRotate(p_unbalance_node, p_parent, p_parent ? p_unbalance_node == p_parent->_p_left_child : false);
 	}
 
-	void handleLeftRightUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
+	void __handleLeftRightUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
 	{
 		/*
 		* 节点是因为新节点插入了其左子树的右子树而失衡。
@@ -117,11 +118,11 @@ public:
 		*	   /					   / \	 
 		*	  E						  C	  E  
 		*/
-		leftRotate(p_unbalance_node->_p_left_child, p_unbalance_node, true);
-		rightRotate(p_unbalance_node, p_parent, p_unbalance_node == p_parent->_p_left_child);
+		__leftRotate(p_unbalance_node->_p_left_child, p_unbalance_node, true);
+		__rightRotate(p_unbalance_node, p_parent, p_parent ? p_unbalance_node == p_parent->_p_left_child : false);
 	}
 
-	void handleRightLeftUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
+	void __handleRightLeftUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
 	{
 		/*
 		* 节点是因为新节点插入了其右子树的左子树而失衡。
@@ -134,11 +135,11 @@ public:
 		*		   /						     \
 		*		  E								  D
 		*/
-		rightRotate(p_unbalance_node->_p_right_child, p_unbalance_node, false);
-		leftRotate(p_unbalance_node, p_parent, p_unbalance_node == p_parent->_p_left_child);
+		__rightRotate(p_unbalance_node->_p_right_child, p_unbalance_node, false);
+		__leftRotate(p_unbalance_node, p_parent, p_unbalance_node == p_parent->_p_left_child);
 	}
 
-	void handleUnBalance(BinaryTreeNode<T>* p_tree)
+	void handleUnBalance(BinaryTreeNode<T>*& p_tree)
 	{
 		std::vector<BinaryTreeNode<T>*> tree_arr;
 		this->levelTraverse(p_tree, tree_arr);
@@ -150,32 +151,35 @@ public:
 			{
 				/* 因为AVL树是高度相差1以内的二叉搜索树，又因为失衡节点不可能会是叶子节点，
 				对于失衡节点来说，可以用顺序存储的方法计算出其父节点 */
+				BinaryTreeNode<T>* p_parent = i > 0 ? tree_arr[(i - 1) / 2] : nullptr;
 				if (this->height(p_node->_p_left_child->_p_left_child) > this->height(p_node->_p_left_child->_p_right_child))
-					handleLeftLeftUnbalance(p_node, tree_arr[(i - 1) / 2]);
+					__handleLeftLeftUnbalance(p_node, p_parent);
 				else
-					handleLeftRightUnbalance(p_node, tree_arr[(i - 1) / 2]);
+					__handleLeftRightUnbalance(p_node, p_parent);
+				this->__updateHeight(p_tree);
 				break;
 			}
 			else if (this->height(p_node->_p_left_child) - this->height(p_node->_p_right_child) < -1)
 			{
+				BinaryTreeNode<T>* p_parent = i > 0 ? tree_arr[(i - 1) / 2] : nullptr;
 				if (this->height(p_node->_p_right_child->_p_left_child) > this->height(p_node->_p_right_child->_p_right_child))
-					handleRightLeftUnbalance(p_node, tree_arr[(i - 1) / 2]);
+					__handleRightLeftUnbalance(p_node, p_parent);
 				else
-					handleRightRightUnbalance(p_node, tree_arr[(i - 1) / 2]);
+					__handleRightRightUnbalance(p_node, p_parent);
+				this->__updateHeight(p_tree);
 				break;
 			}
 		}
-		this->updateHeight(p_tree);
 	}
 
-	int __addNode(T data, BinaryTreeNode<T>* p_tree)
+	int __addNode(T data, BinaryTreeNode<T>*& p_tree)
 	{
 		if (p_tree)
 		{
 			if (data > p_tree->_data)
-				__addNode(data, p_tree->_p_right_child);
+				return __addNode(data, p_tree->_p_right_child);
 			else if (data < p_tree->_data)
-				__addNode(data, p_tree->_p_left_child);
+				return __addNode(data, p_tree->_p_left_child);
 			else
 				return -1;
 		}
@@ -186,14 +190,15 @@ public:
 		return 0;
 	}
 
-	BinaryTreeNode<T>* insert(T data, BinaryTreeNode<T>* p_tree = nullptr)
+	int insert(T data)
 	{
-		if (0 == __addNode(data, p_tree))
+		int ret = __addNode(data, this->_p_root);
+		if (0 == ret)
 		{
-			this->updateHeight(p_tree);
-			handleUnBalance(p_tree);
+			this->__updateHeight(this->_p_root);
+			handleUnBalance(this->_p_root);
 		}
-		return p_tree;
+		return ret;
 	}
 
 	int __delNode(T data, BinaryTreeNode<T>* p_tree, BinaryTreeNode<T>* p_parent)
@@ -202,22 +207,8 @@ public:
 		{
 			if (p_tree->_data == data)
 			{
-				if (nullptr == p_tree->_p_left_child && nullptr == p_tree->_p_right_child)
-				{
-					/* 如果是叶子节点, 删除既可 */
-					relinkChild(nullptr, p_parent, p_tree == p_parent->_p_left_child);
-				}
-				else if (nullptr == p_tree->_p_left_child)
-				{
-					/* 如果只有左子树, 将左子树替换掉删除节点即可 */
-					relinkChild(p_tree->_p_left_child, p_parent, p_tree == p_parent->_p_left_child);
-				}
-				else if (nullptr == p_tree->_p_right_child)
-				{
-					/* 如果只有右子树, 将左子树替换掉删除节点即可 */
-					relinkChild(p_tree->_p_right_child, p_parent, p_tree == p_parent->_p_left_child);
-				}
-				else
+				bool is_left_child = p_parent ? p_tree == p_parent->_p_left_child : false;
+				if (p_tree->_p_left_child && p_tree->_p_right_child)
 				{
 					/* 如果只左右子树都有, 找到左子树的最右节点，替换掉删除节点 */
 					BinaryTreeNode<T>* p_tmp_1 = p_tree;
@@ -227,34 +218,50 @@ public:
 						p_tmp_1 = p_tmp_2;
 						p_tmp_2 = p_tmp_2->_p_right_child;
 					}
+					p_tmp_2->_p_left_child = p_tree->_p_left_child == p_tmp_2 ? nullptr : p_tree->_p_left_child;
+					p_tmp_2->_p_right_child = p_tree->_p_right_child;
 					p_tmp_1->_p_right_child = nullptr;
-					p_tmp_2->_p_left_child = p_tree->_p_left_child;
-					p_tree->_p_left_child = nullptr;
-					relinkChild(p_tmp_2, p_parent, p_tree == p_parent->_p_left_child);
+					__relinkChild(p_tmp_2, p_parent, is_left_child);
 				}
+				else if (nullptr == p_tree->_p_left_child && nullptr == p_tree->_p_right_child)
+				{
+					/* 如果是叶子节点, 删除既可 */
+					__relinkChild(nullptr, p_parent, is_left_child);
+				}
+				else if (nullptr == p_tree->_p_left_child)
+				{
+					/* 如果只有左子树, 将左子树替换掉删除节点即可 */
+					__relinkChild(p_tree->_p_left_child, p_parent, is_left_child);
+				}
+				else
+				{
+					/* 如果只有右子树, 将左子树替换掉删除节点即可 */
+					__relinkChild(p_tree->_p_right_child, p_parent, is_left_child);
+				}
+				p_tree->_p_left_child = nullptr;
+				p_tree->_p_right_child = nullptr;
 				delete p_tree;
 				p_tree = nullptr;
 				return 0;
 
 			}
 			else if (data > p_tree->_data)
-				__delNode(data, p_tree->_p_right_child, p_tree);
+				return __delNode(data, p_tree->_p_right_child, p_tree);
 			else
-				__delNode(data, p_tree->_p_left_child, p_tree);
+				return __delNode(data, p_tree->_p_left_child, p_tree);
 		}
 		return -1;
 	}
 
-	BinaryTreeNode<T>* remove(T data, BinaryTreeNode<T>* p_tree = nullptr)
+	int remove(T data)
 	{
-		if (nullptr == p_tree)
-			p_tree = this->root();
-		if (0 == __delNode(data, p_tree, p_tree))
+		int ret = __delNode(data, this->_p_root, this->_p_root);
+		if (0 == ret)
 		{
-			this->updateHeight(p_tree);
-			handleUnBalance(p_tree);
+			this->__updateHeight(this->_p_root);
+			handleUnBalance(this->_p_root);
 		}
-		return p_tree;
+		return ret;
 	}
 };
 
