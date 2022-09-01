@@ -41,9 +41,10 @@ public:
 		return ret;
 	}
 
-	void GiveBack(T* ptr)
+	void GiveBack(T* ptr, void (*clear_func)(void)=nullptr)
 	{
-		/* clear object data befor give back */
+		if (clear_func)
+			clear_func();
 		_avaliable_ptrs.push(ptr);
 	}
 
