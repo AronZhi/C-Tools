@@ -8,24 +8,31 @@ template<class T>
 class MemoryPool
 {
 public:
-	MemoryPool() : _mem(nullptr) {}
+	MemoryPool() : _mem(NULL) {}
 	~MemoryPool()
 	{
 		if (_mem)
-			delete[] _mem;
+			free(_mem)
+		_mem = NULL;
+
 	}
 
 	bool Malloc(int32_t obj_count)
 	{
-		_mem = new T[obj_count];
-		if (_mem)
+		if (NULL == _mem)
 		{
-			for (int i = 0; i < obj_count; i++)
+			_mem = (char*)malloc(obj_count * sizeof(T));
+			if (_mem)
 			{
-				T* ptr = _mem + i;
-				_avaliable_ptrs.push(ptr);
+				char* p = _mem;
+				while (p)
+				{
+					_avaliable_ptrs.push(p);
+					p += obj_size;
+				}
+				return true;
 			}
-			return true;
+
 		}
 		return false;
 	}
@@ -35,22 +42,25 @@ public:
 		T* ret = NULL;
 		if (!_avaliable_ptrs.empty())
 		{
-			ret = _avaliable_ptrs.front();
+			char* p = _avaliable_ptrs.front();
 			_avaliable_ptrs.pop();
+			ret = static_cast<T*>(p);
+			ret->T::T();
 		}
 		return ret;
 	}
 
-	void GiveBack(T* ptr, void (*clear_func)(void)=nullptr)
+	void GiveBack(T* ptr)
 	{
-		if (clear_func)
-			clear_func();
-		_avaliable_ptrs.push(ptr);
+		ptr->T::~T();
+		char* p = ptr;
+		memset(p, 0, sizeof(T))
+		_avaliable_ptrs.push(p);
 	}
 
 private:
-	std::queue<T*> _avaliable_ptrs;
-	T* _mem;
+	std::queue<char*> _avaliable_ptrs;
+	char* _mem;
 };
 
 #endif // MEMORY_POOL
