@@ -9,7 +9,7 @@ template <typename T>
 class SingleInst
 {
 public:
-	static T& GetInstance()
+	static T& get_instance()
 	{
 		static std::once_flag flg;
 		std::call_once(flag, [&]() { __inst.reset(new T); });
