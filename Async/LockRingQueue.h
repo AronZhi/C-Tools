@@ -25,7 +25,7 @@ protected:
 	}
 
 public:
-	LockRingQueue(unsigned int capacity = 1024) :
+	LockRingQueue(unsigned int capacity = 16384) :
 		_capacity(capacity),
 		_head(0),
 		_tail(0),

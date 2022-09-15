@@ -8,31 +8,36 @@
 #include <mutex>
 #include <condition_variable>
 #include <future>
+#include <atomic>
 #include <functional>
 #include <stdexcept>
 
 class ThreadPool {
 public:
     ThreadPool(size_t thread_count);
-    template<class F, class... Args>
-    auto AddTask(F&& f, Args&&... args)->std::future<typename std::result_of<F(Args...)>::type>;
+    
     ~ThreadPool();
-private:
-    std::vector<std::thread> __work_threads;
-    std::queue<std::function<void()> > __tasks;
 
-    std::mutex __queue_mutex;
-    std::condition_variable __weak_thread_signal;
-    bool __stop;
+    template<class F, class... Args>
+    auto add_task(F&& f, Args&&... args)->std::future<typename std::result_of<F(Args...)>::type>;
+
+    void stop();
+
+protected:
+    std::vector<std::thread> _thread_pool;
+    std::queue<std::function<void()> > _task_queue;
+    std::mutex _task_queue_mutex;
+    std::condition_variable _weak_thread_signal;
+    std::atomic_bool _run;
 };
 
 /*创建一定数量的线程*/
 ThreadPool::ThreadPool(size_t thread_count)
-: __stop(false)
+: _run(true)
 {
     for(size_t i = 0; i < thread_count; i++)
     {
-        __work_threads.emplace_back(
+        _thread_pool.emplace_back(
             [this]
             {
                 /* 线程将循环从任务队列中取任务做任务 */
@@ -41,12 +46,16 @@ ThreadPool::ThreadPool(size_t thread_count)
                     std::function<void()> task;
                     {
                         /* 进入临界区获取任务 */
-                        std::unique_lock<std::mutex> lock(this->__queue_mutex);
-                        this->__weak_thread_signal.wait(lock, [this]{return this->__stop || !this->__tasks.empty();});
-                        if (this->__stop && this->__tasks.empty())
+                        std::unique_lock<std::mutex> lock(this->_task_queue_mutex);
+                        while (this->_run.load() && this->_task_queue.empty())
+                            this->_weak_thread_signal.wait(lock);
+                        if (!this->_run.load())
                             return;
-                        task = std::move(this->__tasks.front());
-                        this->__tasks.pop();
+                        else
+                        {
+                            task = std::move(this->_task_queue.front());
+                            this->_task_queue.pop();
+                        }                        
                     }
                     /* 退出临界区执行任务 */
                     task();
@@ -58,33 +67,35 @@ ThreadPool::ThreadPool(size_t thread_count)
 
 ThreadPool::~ThreadPool()
 {
+    stop();
+}
+
+void ThreadPool::stop()
+{
+    if (_run.load())
     {
-        std::unique_lock<std::mutex> lock(__queue_mutex);
-        __stop = true;
+        bool running = true;
+        while (!_run.compare_exchange_strong(running, false));
+        _weak_thread_signal.notify_all();
+        for (std::thread& thread : _thread_pool)
+            thread.join();
     }
-    __weak_thread_signal.notify_all();
-    /* 等待所有线程执行完 */
-    for (std::thread& thread : __work_threads)
-        thread.join();
 }
 
 template<class F, class... Args>
-auto ThreadPool::AddTask(F&& f, Args&&... args)->std::future<typename std::result_of<F(Args...)>::type>
+auto ThreadPool::add_task(F&& f, Args&&... args)->std::future<typename std::result_of<F(Args...)>::type>
 {
     using ret_type = typename std::result_of<F(Ars...)>::type;
-    auto task = std::make_shared<std::packaged_task<ret_type()> >(
-        std::bind(std::forward<F>(f), std::forward<Args>(args)...)
-    );
-    std::future<ret_type> res = task->get_future()
+    auto task = std::make_shared<std::packaged_task<ret_type()>>(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+    std::future<ret_type> res = task->get_future();
+    if (_run.load())
     {
         /* 进入临界区，将任务添加到任务队列 */
-        std::unique_lock<std::mutex> lock(__queue_mutex);
-        if (__stop)
-            throw std::runtie_error("add task on stopped thread pool");
-        __tasks.emplace([task](){*task();});
+        std::unique_lock<std::mutex> lock(_task_queue_mutex);
+        _task_queue.emplace([task]() {*task(); });
     }
     /* 唤醒一个线程取执行任务 */
-    __weak_thread_signal.notify_one();
+    _weak_thread_signal.notify_one();
     return res;
 }
 
