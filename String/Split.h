@@ -4,7 +4,7 @@
 #include <string>
 #include <regex>
 
-void Split(const std::string& src, const std::string& delimiter, std::vector<std::string>& ret)
+void split(const std::string& src, const std::string& delimiter, std::vector<std::string>& ret)
 {
 	std::regex re(delimiter);
 	/*
