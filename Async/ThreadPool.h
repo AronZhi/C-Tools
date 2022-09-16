@@ -85,8 +85,15 @@ void ThreadPool::stop()
 template<class F, class... Args>
 auto ThreadPool::add_task(F&& f, Args&&... args)->std::future<typename std::result_of<F(Args...)>::type>
 {
+    /*
+    * return 一个future, 可以用future::get()函数获得执行结果
+    */
     using ret_type = typename std::result_of<F(Ars...)>::type;
     auto task = std::make_shared<std::packaged_task<ret_type()>>(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+    /*
+    * 通过std::bind生成一个新的可调用对象，可以让task延迟调用
+    * std::packaged_task允许传入一个函数或其他可调用对象，并将函数计算的结果作为异步结果传递给std::future，包括函数运行时产生的异常
+    */
     std::future<ret_type> res = task->get_future();
     if (_run.load())
     {
