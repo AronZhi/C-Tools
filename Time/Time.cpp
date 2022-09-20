@@ -4,7 +4,7 @@
 
 time_t GetCurrentTimeStamp()
 {
-    return time(NULL);
+    return time(NULL);   
 }
 
 time_t TimeStrToTimeStamp(const std::string& dateTime)

@@ -9,23 +9,25 @@ template <class T>
 class LockMemoryPool
 {
 protected:
-	void* _memory_pool;
-	std::queue<T*> _queue;
+	char* _memory_pool;
+	std::queue<char*> _queue;
 	std::mutex _pool_mutex;
 
 protected:
-	LockMemoryPool(int count = 1) :
+	LockMemoryPool(int count = 1)
 	{
+		int obj_size = sizeof(T) + 1;
 		for (int i = 0; i < 3; i++)
 		{
-			_memory_pool = malloc(count * sizeof(T));
+			_memory_pool = malloc(count * obj_size);
 			if (_memory_pool)
 				break;
 		}
 		assert(_memory_pool);
+		memset(_memory_pool, 0, count * obj_size);
 		for (int j = 0; j < count; j++)
 		{
-			T* p = static_cast<T*> (_memory_pool + j * sizeof(T));
+			char* p = static_cast<char*> (_memory_pool + j * obj_size);
 			_queue.push(p);
 		}
 	}
@@ -45,7 +47,7 @@ protected:
 		* 无锁
 		* 此处参考replacement_new, 从队列中取出内存，并初始化。T类需要有默认构造函数。
 		*/
-		void* buf = nullptr;
+		char* buf = nullptr;
 		if (!_queue.empty())
 		{
 			buf = _queue.front();
@@ -83,7 +85,7 @@ protected:
 		* 有锁
 		*/
 		std::unique_lock<std::mutex> lock(_pool_mutex);
-		push_in_queue(mem, has_destruct_func);
+		push_directly(mem, has_destruct_func);
 		
 	}
 };
