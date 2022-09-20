@@ -5,21 +5,22 @@
 #include <queue>
 #include <assert.h>
 
-template <class T>
 class LockMemoryPool
 {
 protected:
 	char* _memory_pool;
 	std::queue<char*> _queue;
 	std::mutex _pool_mutex;
+	int _obj_size;
 
 protected:
-	LockMemoryPool(int count = 1)
+	LockMemoryPool(int obj_size, int count = 1):
+		_obj_size(obj_size)
 	{
-		int obj_size = sizeof(T) + 1;
+		obj_size += 1;
 		for (int i = 0; i < 3; i++)
 		{
-			_memory_pool = malloc(count * obj_size);
+			_memory_pool = (char*)malloc(count * obj_size);
 			if (_memory_pool)
 				break;
 		}
@@ -41,27 +42,31 @@ protected:
 		}
 	}
 
-	T* pop_directly()
+	template<class  T, class ... Targs>
+	T* pop_directly(Targs&... args)
 	{
 		/*
 		* 无锁
 		* 此处参考replacement_new, 从队列中取出内存，并初始化。T类需要有默认构造函数。
 		*/
+		assert(sizeof(T) < _obj_size);
 		char* buf = nullptr;
 		if (!_queue.empty())
 		{
 			buf = _queue.front();
 			_queue.pop();
 		}
-		T* ret = new(buf) T;
+		T* ret = new(buf) T(args);
 		return ret;
 	}
 
+	template <class T>
 	void push_directly(T* mem, bool has_destruct_func = true)
 	{
 		/*
 		* 无锁
 		*/
+		assert(sizeof(T) < _obj_size);
 		if (has_destruct_func)
 			mem->T::~T();
 		else
@@ -70,15 +75,17 @@ protected:
 		return true;
 	}
 
-	T* pop_in_queue()
+	template<class  T, class ... Targs>
+	T* pop_in_queue(Targs&... args)
 	{
 		/*
 		* 有锁
 		*/
 		std::unique_lock<std::mutex> lock(_pool_mutex);
-		return pop_directly();
+		return pop_directly(args);
 	}
 
+	template <class T>
 	void push_in_queue(T* mem, bool has_destruct_func = true)
 	{
 		/*
