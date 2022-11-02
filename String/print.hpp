@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include "Convert.h"
 
 template <class cls>
 void _wprintOne(cls param)
