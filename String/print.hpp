@@ -1,24 +1,25 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include "Convert.h"
 
 template <class cls>
-void print_one(std::wofstream& stream, cls param)
+void _wprintOne(cls param)
 {
-	stream << param << ' ';
+	std::wcout << param << ' ';
 }
 
 template <>
-void print_one<std::string>(std::wofstream& stream,std::string param)
+void _wprintOne<std::string>(std::string param)
 {
-	stream << param.c_str() << ' ';
+	std::wcout << param.c_str() << ' ';
 }
 
 template <class... Args>
-int print(Args... args)
+int wprint(Args... args)
 {
 	int ret = sizeof...(args);
-	(void)std::initializer_list<int> {(std::wcout << ' ' << args << ' ', 0)...};
+	(void)std::initializer_list<int> {(_wprintOne<decltype(args)>(args), 0)...};
 	std::wcout << std::endl;
 	return ret;
 }
