@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PRINT_HPP
+#define PRINT_HPP
+
 #include <iostream>
 #include <string>
 #include "Convert.h"
@@ -23,3 +25,5 @@ int wprint(Args... args)
 	std::wcout << std::endl;
 	return ret;
 }
+
+#endif // PRINT_HPP
