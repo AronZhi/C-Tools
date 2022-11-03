@@ -17,7 +17,10 @@ void _wprintOne(cls param)
 	for (int i = 0; i < 5; ++i)
 	{
 		if (*p != invalid_print_type[i])
+		{
 			invalid = false;
+			break;
+		}
 	}
 	if (invalid)
 		return;
