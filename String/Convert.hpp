@@ -1,5 +1,5 @@
-#ifndef CONVERT_H
-#define CONVERT_H
+#ifndef CONVERT_HPP
+#define CONVERT_HPP
 
 #include <string>
 #include <locale>
@@ -17,4 +17,4 @@ void s_to_ws(const std::string& src, std::wstring& ret)
 	ret = wcv.from_bytes(src);
 }
 
-#endif // CONVERT_H
+#endif // CONVERT_HPP

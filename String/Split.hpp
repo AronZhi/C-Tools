@@ -1,5 +1,6 @@
-#ifndef SPLIT_H
-#define SPLIT_H
+#ifndef SPLIT_HPP
+#define SPLIT_HPP
+
 #include <vector>
 #include <string>
 #include <regex>
@@ -16,4 +17,4 @@ void split(const std::string& src, const std::string& delimiter, std::vector<std
 	ret = { std::sregex_token_iterator(src.begin(), src.end(), re, -1),std::sregex_token_iterator() };
 }
 
-#endif // SPLIT_H
+#endif // SPLIT_HPP
