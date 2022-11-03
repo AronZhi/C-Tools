@@ -10,8 +10,7 @@ template <class cls>
 void _wprintOne(cls param)
 {
 	const char* type_name = typeid(param).name();
-	
-	char* p = type_name;
+	char* p = const_cast<char*>(type_name);
 	bool invalid = true;
 	static char invalid_print_type[5] = { 'c', 'l', 'a', 's', 's' };
 	for (int i = 0; i < 5; ++i)
