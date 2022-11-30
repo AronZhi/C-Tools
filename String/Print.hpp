@@ -29,7 +29,7 @@ void _wprintOne(std::wstringstream& ws, cls param)
 }
 
 template <>
-void _wprintOne<std::string>(std::wstringstream& ws, std::string param)
+inline void _wprintOne<std::string>(std::wstringstream& ws, std::string param)
 {
 	ws << param.c_str() << L' ';
 }
