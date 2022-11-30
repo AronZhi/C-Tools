@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 
 template <class cls>
 void _wprintOne(char splite, std::wstringstream& ws, cls param)
@@ -43,8 +44,8 @@ void wprint(Args... args)
 	wprintf(L"%s\n", ws.str().c_str());
 }
 
-template<class T, class Allocator, class... Args>
-void wprint(const std::list<T, Allocator>& lst, Args... args)
+template<class T, class... Args>
+void wprint(const std::list<T>& lst, Args... args)
 {
 	std::wstringstream ws(L"");
 	ws << '[';
@@ -62,8 +63,8 @@ void wprint(const std::list<T, Allocator>& lst, Args... args)
 	wprintf(L"%s\n", ws.str().c_str());
 }
 
-template<class T, class Allocator, class... Args>
-void wprint(const std::vector<T, Allocator>& vec, Args... args)
+template<class T, class... Args>
+void wprint(const std::vector<T>& vec, Args... args)
 {
 	std::wstringstream ws(L"");
 	ws << '[';
@@ -73,6 +74,28 @@ void wprint(const std::vector<T, Allocator>& vec, Args... args)
 			_wprintOne<decltype(item)>(',', ws, item);
 	}
 	ws << ']';
+	if (sizeof...(args) > 0)
+	{
+		ws << ' ';
+		(void)std::initializer_list<int> {(_wprintOne<decltype(args)>(' ', ws, args), 0)...};
+	}
+	wprintf(L"%s\n", ws.str().c_str());
+}
+
+template<class K, class V, class... Args>
+void wprint(const std::map<K, V>& map, Args... args)
+{
+	std::wstringstream ws(L"");
+	ws << '{';
+	if (map.size() > 0)
+	{
+		for (auto item : map)
+		{
+			_wprintOne<decltype(item.first)>(':', ws, item.first);
+			_wprintOne<decltype(item.second)>(',', ws, item.second);
+		}
+	}
+	ws << '}';
 	if (sizeof...(args) > 0)
 	{
 		ws << ' ';
