@@ -34,32 +34,44 @@ inline void _wprintOne<std::string>(std::wstringstream& ws, std::string param)
 	ws << param.c_str() << L' ';
 }
 
-template<class T, class Allocator>
-void _wprintContainer(std::wstringstream& ws, const std::vector<T, Allocator>& vec)
-{
-	if (vec.empty())
-		return;
-
-	for (auto item : vec)
-		_wprintOne<decltype(item)>(ws, item);
-}
-
-template<class T, class Allocator>
-void _wprintContainer(std::wstringstream& ws, const std::list<T, Allocator>& lst)
-{
-	if (lst.empty())
-		return;
-
-	for (auto item : lst)
-		_wprintOne<decltype(item)>(ws, item);
-}
-
 template <class... Args>
 int wprint(Args... args)
 {
 	std::wstringstream ws(L"");
 	int ret = sizeof...(args);
 	(void)std::initializer_list<int> {(_wprintOne<decltype(args)>(ws, args), 0)...};
+	wprintf(L"%s\n", ws.str().c_str());
+	return ret;
+}
+
+template<class T, class Allocator>
+int wprint(const std::list<T, Allocator>& lst)
+{
+	std::wstringstream ws(L"");
+	ws << L"[ ";
+	int ret = lst.size();
+	if (ret > 0)
+	{
+		for (auto item : lst)
+			_wprintOne<decltype(item)>(ws, item);
+	}
+	ws << L"]";
+	wprintf(L"%s\n", ws.str().c_str());
+	return ret;
+}
+
+template<class T, class Allocator>
+int wprint(const std::vector<T, Allocator>& vec)
+{
+	std::wstringstream ws(L"");
+	ws << L"[ ";
+	int ret = vec.size();
+	if (ret > 0)
+	{
+		for (auto item : vec)
+			_wprintOne<decltype(item)>(ws, item);
+	}
+	ws << L"]";
 	wprintf(L"%s\n", ws.str().c_str());
 	return ret;
 }
