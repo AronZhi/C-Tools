@@ -9,7 +9,7 @@
 #include <map>
 
 template <class cls>
-void _wprintOne(char splite, std::wstringstream& ws, cls param)
+void _wprintOne(char splite, std::wstringstream& ws, cls& param)
 {
 	const char* type_name = typeid(param).name();
 	char* p = const_cast<char*>(type_name);
@@ -30,7 +30,7 @@ void _wprintOne(char splite, std::wstringstream& ws, cls param)
 }
 
 template <>
-inline void _wprintOne<std::string>(char splite, std::wstringstream& ws, std::string param)
+inline void _wprintOne<std::string>(char splite, std::wstringstream& ws, std::string& param)
 {
 	ws << param.c_str() << splite;
 }
