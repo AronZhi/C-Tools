@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESSAGE_QUEUE
+#define MESSAGE_QUEUE
 
 /*
 * Apply to multi thread push message and one thread pop message
@@ -55,3 +56,5 @@ public:
 		return ret;
 	}
 };
+
+#endif // MESSAGE_QUEUE
