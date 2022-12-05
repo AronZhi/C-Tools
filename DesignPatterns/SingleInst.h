@@ -11,7 +11,7 @@ class SingleInst
 public:
 	static T& get_instance()
 	{
-		static std::once_flag flg;
+		static std::once_flag flag;
 		std::call_once(flag, [&]() { __inst.reset(new T); });
 		return *__inst;
 	}
