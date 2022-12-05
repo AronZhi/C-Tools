@@ -17,6 +17,12 @@ protected:
 	std::condition_variable _signal;
 
 public:
+	bool empty()
+	{
+		std::unique_lock<std::mutex> lock(_mtx);
+		return _queue.empty();
+	}
+
 	bool push(T* pMsg)
 	{
 		T* p = (T*)malloc(sizeof(T));
