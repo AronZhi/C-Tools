@@ -19,8 +19,8 @@ protected:
 public:
 	bool push(T* pMsg)
 	{
-		T* p = malloc(sizeof(T));
-		if (T)
+		T* p = (T*)malloc(sizeof(T));
+		if (p)
 		{
 			memcpy(p, pMsg, sizeof(T));
 			std::shared_ptr<T> queue_msg(p);
@@ -43,7 +43,7 @@ public:
 			std::unique_lock<std::mutex> lock(_mtx);
 			while (_queue.empty())
 				_signal.wait(lock);
-			ret.reset(_queue.front());
+			ret = _queue.front();
 			_queue.pop();
 		} while (false);
 		return ret;
