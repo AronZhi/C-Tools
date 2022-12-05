@@ -16,7 +16,11 @@ protected:
 
 public:
 	ThreadItem(ThreadWork* pWork) : _work(pWork), _thread_run(false), _thread_exist(false) {}
-	virtual ~ThreadItem() { stop(); }
+	virtual ~ThreadItem() 
+	{
+		stop();
+		_work.reset(nullptr);
+	}
 
 	void run()
 	{
