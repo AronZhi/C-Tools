@@ -26,14 +26,14 @@ void _QuickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
 			l++;
 		swap(&(input[l]), &(input[r]));
 	}
-	// ÍË³öÑ­»·Ê±£¬±Ø¶¨lºÍrÎ»ÖÃÖØµş£¬´ËÊ±½»»»lºÍbase_indexµÄÎ»ÖÃ£¬¾ÍÄÜ±£Ö¤×ó±ßÊ±Ğ¡ÓÚ»ù×¼Êı£¬ÓÒ±ßÊ±´óÓÚ»ù×¼Êı 
+	// é€€å‡ºå¾ªç¯æ—¶ï¼Œå¿…å®šlå’Œrä½ç½®é‡å ï¼Œæ­¤æ—¶äº¤æ¢lå’Œbase_indexçš„ä½ç½®ï¼Œå°±èƒ½ä¿è¯å·¦è¾¹æ—¶å°äºåŸºå‡†æ•°ï¼Œå³è¾¹æ—¶å¤§äºåŸºå‡†æ•° 
 	swap(&(input[l]), &(input[base_index]));
 	_QuickSortRecursive<T>(input, start, l - 1);
 	_QuickSortRecursive<T>(input, l + 1, end);
 }
 
 
-// ¸Ä½øswap£¬¼õÉÙÄÚ´æ¿ªÏú
+// æ”¹è¿›swapï¼Œå‡å°‘å†…å­˜å¼€é”€
 template <class T>
 void _QuickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
 {
@@ -56,8 +56,8 @@ void _QuickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
 			l++;
 		swap(&(input[l]), &(input[r]), &(input[base_index]));
 	}
-	// ÍË³öÑ­»·Ê±£¬±Ø¶¨lºÍrÎ»ÖÃÖØµş£¬´ËÊ±½«lµÄÎ»ÖÃ·ÅÉÏbase£¬¾ÍÄÜ±£Ö¤ÓÒ±ßµÄÊı´óÓÚbase£¬×ó±ßµÄÊıĞ¡ÓÚbase 
-	// ·ÅbaseÇ°£¬°ÑlÎ»ÖÃÉÏµÄÊı·ÅÔÚbase_indexÉÏ±£Ö¤Êı¾İÍêÕû 
+	// é€€å‡ºå¾ªç¯æ—¶ï¼Œå¿…å®šlå’Œrä½ç½®é‡å ï¼Œæ­¤æ—¶å°†lçš„ä½ç½®æ”¾ä¸Šbaseï¼Œå°±èƒ½ä¿è¯å³è¾¹çš„æ•°å¤§äºbaseï¼Œå·¦è¾¹çš„æ•°å°äºbase 
+	// æ”¾baseå‰ï¼ŒæŠŠlä½ç½®ä¸Šçš„æ•°æ”¾åœ¨base_indexä¸Šä¿è¯æ•°æ®å®Œæ•´ 
 	input[base_index] = input[l];
 	input[l] = base;
 	_QuickSortRecursive<T>(input, start, l - 1);
@@ -71,18 +71,18 @@ void _quick_sort_recursive(std::vector<T>& input, int32_t start, int32_t end)
 	assert(start >= 0);
 	if (start >= end)
 		return;
-	T base = input[start]; // ±ØĞëÓÃstart×÷Îª¿ÓÎ»£¬·ñÔòÑ­»·ÄÚµÚÒ»´Î½»»»»á¶ªÊ§input[start]µÄÖµ 
+	T base = input[start]; // å¿…é¡»ç”¨startä½œä¸ºå‘ä½ï¼Œå¦åˆ™å¾ªç¯å†…ç¬¬ä¸€æ¬¡äº¤æ¢ä¼šä¸¢å¤±input[start]çš„å€¼ 
 	int32_t l = start, r = end;
 	while (l < r)
 	{
 		while (input[r] >= base && r > l)
 			r--;
-		input[l] = input[r]; // l×÷Îª¿ÓÎ»¿ªÊ¼£¬´æ·ÅrÎ»ÖÃÉÏµÄÊı£¬È»ºórÉÏµÄÊı¾İÒÑ¾­±£´æ¹ı£¬rÎ»ÖÃ³ÉÎª¿ÓÎ» 
+		input[l] = input[r]; // lä½œä¸ºå‘ä½å¼€å§‹ï¼Œå­˜æ”¾rä½ç½®ä¸Šçš„æ•°ï¼Œç„¶årä¸Šçš„æ•°æ®å·²ç»ä¿å­˜è¿‡ï¼Œrä½ç½®æˆä¸ºå‘ä½ 
 		while (input[l] <= base && l < r)
 			l++;
-		input[r] = input[l]; // r³ÉÎª¿ÓÎ»´æ·ÅlÎ»ÖÃÉÏµÄÊı£¬È»ºólÒòÎªÊı¾İÒÑ¾­±£´æ³ÉÎª¿ÓÎ»
+		input[r] = input[l]; // ræˆä¸ºå‘ä½å­˜æ”¾lä½ç½®ä¸Šçš„æ•°ï¼Œç„¶ålå› ä¸ºæ•°æ®å·²ç»ä¿å­˜æˆä¸ºå‘ä½
 	}
-	input[l] = base; // ÍË³öÑ­»·£¬lºÍrÎ»ÖÃÖØºÏ£¬Õâ¸öÎ»ÖÃÊÇ×îºóµÄ¿ÓÎ»£¬·Å»ábaseÊı£¬È»ºó×ó±ßÊÇĞ¡ÓÚbase£¬ÓÒ±ßÊÇ´óÓÚbase 
+	input[l] = base; // é€€å‡ºå¾ªç¯ï¼Œlå’Œrä½ç½®é‡åˆï¼Œè¿™ä¸ªä½ç½®æ˜¯æœ€åçš„å‘ä½ï¼Œæ”¾ä¼šbaseæ•°ï¼Œç„¶åå·¦è¾¹æ˜¯å°äºbaseï¼Œå³è¾¹æ˜¯å¤§äºbase 
 	_quick_sort_recursive<T>(input, start, l - 1);
 	_quick_sort_recursive<T>(input, l + 1, end);
 }
@@ -100,17 +100,17 @@ void _merge_sort_recursive(std::vector<T>& input, std::vector<T>& temp, int star
 	if (start >= end)
 		return;
 	int mid = (start + end) / 2;
-	// ½«Êı×é·Ö¸î 
+	// å°†æ•°ç»„åˆ†å‰² 
 	_merge_sort_recursive<T>(input, temp, start, mid);
 	_merge_sort_recursive<T>(input, temp, mid + 1, end);
 	int i = start;
 	int start1 = start, start2 = mid + 1, end1 = mid, end2 = end;
-	// ºÏ²¢·Ö¸îºóµÄµ¥Ôª 
-	// ´Ó×óÓÒÁ½±ß²»¶ÏÑ¡È¡Ğ¡µÄÊıÒÀ´Î·ÅÈëÁÙÊ±Êı×éÖØ 
+	// åˆå¹¶åˆ†å‰²åçš„å•å…ƒ 
+	// ä»å·¦å³ä¸¤è¾¹ä¸æ–­é€‰å–å°çš„æ•°ä¾æ¬¡æ”¾å…¥ä¸´æ—¶æ•°ç»„é‡ 
 	while (start1 <= end1 && start2 <= end2)
 		temp[i++] = input[start1] < input[start2] ? input[start1++] : input[start2++];
-	// ÍË³öÌõ¼şÊÇstart1 > end1 || start2 > end2 
-	// µİ¹éÖ®ºó,×óÓÒ²¿·ÖÊÇÓĞĞòÊı×é,½«Ê£ÓàµÄÊı·ÅÈëÊı×éÖĞ  
+	// é€€å‡ºæ¡ä»¶æ˜¯start1 > end1 || start2 > end2 
+	// é€’å½’ä¹‹å,å·¦å³éƒ¨åˆ†æ˜¯æœ‰åºæ•°ç»„,å°†å‰©ä½™çš„æ•°æ”¾å…¥æ•°ç»„ä¸­  
 	while (start1 <= end1)
 		temp[i++] = input[start1++];
 	while (start2 <= end2)
