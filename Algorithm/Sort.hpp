@@ -66,7 +66,7 @@ void _QuickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
 */
 
 template <class T>
-void _quick_sort_recursive(std::vector<T>& input, int32_t start, int32_t end)
+void _quickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
 {
 	assert(start >= 0);
 	if (start >= end)
@@ -83,26 +83,26 @@ void _quick_sort_recursive(std::vector<T>& input, int32_t start, int32_t end)
 		input[r] = input[l]; // r成为坑位存放l位置上的数，然后l因为数据已经保存成为坑位
 	}
 	input[l] = base; // 退出循环，l和r位置重合，这个位置是最后的坑位，放会base数，然后左边是小于base，右边是大于base 
-	_quick_sort_recursive<T>(input, start, l - 1);
-	_quick_sort_recursive<T>(input, l + 1, end);
+	_quickSortRecursive<T>(input, start, l - 1);
+	_quickSortRecursive<T>(input, l + 1, end);
 }
 
 template <class T>
-void quick_sort(std::vector<T>& input)
+void quickSort(std::vector<T>& input)
 {
-	_quick_sort_recursive<T>(input, 0, input.size() - 1);
+	_quickSortRecursive<T>(input, 0, input.size() - 1);
 }
 
 template<typename T>
-void _merge_sort_recursive(std::vector<T>& input, std::vector<T>& temp, int start, int end)
+void _mergeSortRecursive(std::vector<T>& input, std::vector<T>& temp, int start, int end)
 {
 	assert(start >= 0);
 	if (start >= end)
 		return;
 	int mid = (start + end) / 2;
 	// 将数组分割 
-	_merge_sort_recursive<T>(input, temp, start, mid);
-	_merge_sort_recursive<T>(input, temp, mid + 1, end);
+	_mergeSortRecursive<T>(input, temp, start, mid);
+	_mergeSortRecursive<T>(input, temp, mid + 1, end);
 	int i = start;
 	int start1 = start, start2 = mid + 1, end1 = mid, end2 = end;
 	// 合并分割后的单元 
@@ -120,11 +120,11 @@ void _merge_sort_recursive(std::vector<T>& input, std::vector<T>& temp, int star
 }
 
 template <class T>
-void merge_sort(std::vector<T>& input)
+void mergeSort(std::vector<T>& input)
 {
 	std::vector<T> tmp;
 	tmp.resize(input.size());
-	_merge_sort_recursive(input, tmp, 0, input.size() - 1);
+	_mergeSortRecursive(input, tmp, 0, input.size() - 1);
 }
 
 #endif//SORT_H
