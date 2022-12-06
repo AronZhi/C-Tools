@@ -1,10 +1,13 @@
 #include "Time.h"
 
 #include <memory.h>
+#include <chrono>
 
 time_t GetCurrentTimeStamp()
 {
-    return time(NULL);   
+    std::chrono::system_clock::duration current = std::chrono::system_clock::now().time_since_epoch();
+    std::chrono::seconds time_stamp = std::chrono::duration_cast<std::chrono::seconds>(current);
+    return time_stamp.count();
 }
 
 time_t TimeStrToTimeStamp(const std::string& dateTime)
