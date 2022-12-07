@@ -1,15 +1,14 @@
 #include "../String/print.hpp"
-#include <chrono>
+#include "../Time/Time.hpp"
 
-void testTime()
+void testGetTimeStamp()
 {
-    std::chrono::system_clock::duration current = std::chrono::system_clock::now().time_since_epoch();
-    std::chrono::seconds time_stamp = std::chrono::duration_cast<std::chrono::seconds>(current);
-    wprint(time_stamp.count());
+    time_t time_stamp = GetCurrentTimeStamp();
+    wprint(time_stamp);
 }
 
 int main()
 {
-    testTime();
+    testGetTimeStamp();
     return 0;
 }
