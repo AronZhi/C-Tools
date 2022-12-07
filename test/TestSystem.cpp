@@ -28,8 +28,26 @@ void testComparePath()
     wprint(ret);
 }
 
+#ifdef _WIN32
+
+void testDosPathNtPath()
+{
+    WCHAR nt[250] = L"\\Device\\HarddiskVolume2\\Users\\Public";
+    WCHAR dos[250] = { 0 };
+    ntPath2DosPath(nt, dos);
+    wprint(dos);
+
+    WCHAR nt2[250] = { 0 };
+    dosPath2NtPath(dos, nt2);
+    wprint(nt2);
+}
+
+#endif
+
 int main()
 {
-    testComparePath();
+    #ifdef _WIN32
+    testDosPathNtPath();
+    #endif
     return 0;
 }
