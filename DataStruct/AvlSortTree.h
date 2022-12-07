@@ -1,7 +1,7 @@
 #ifndef AVL_SORT_TREE
 #define AVL_SORT_TREE
 
-#include "BinaryTree.h"
+#include "BinaryTree.hpp"
 
 
 template <class T>
@@ -38,7 +38,7 @@ public:
 	void __rightRotate(BinaryTreeNode<T>*& p_node, BinaryTreeNode<T>* p_parent, bool node_is_left_child)
 	{
 		/*
-		*	ÓÒĞı×ª,AÓÒ(Ë³Ê±Õë)Ğı×ª³ÉÎªBµÄ×ÓÊ÷¡£BµÄÓÒ×ÓÊ÷½«Ö¸ÏòA,ÒªÏÈÓÃAµÄ×ó×ÓÊ÷Ö¸ÏòBµÄÓÒ×ÓÊ÷£¬ÔÙÈÃBµÄÓÒ×ÓÊ÷Ö¸ÏòA£¬·ñÔò»á¶ªÊ§µôBµÄÓÒ×ÓÊ÷£¬ÆäËû½Úµã²»±ä£¬B³ÉÎªĞÂµÄ¸ù½Úµã¡£
+		*	å³æ—‹è½¬,Aå³(é¡ºæ—¶é’ˆ)æ—‹è½¬æˆä¸ºBçš„å­æ ‘ã€‚Bçš„å³å­æ ‘å°†æŒ‡å‘A,è¦å…ˆç”¨Açš„å·¦å­æ ‘æŒ‡å‘Bçš„å³å­æ ‘ï¼Œå†è®©Bçš„å³å­æ ‘æŒ‡å‘Aï¼Œå¦åˆ™ä¼šä¸¢å¤±æ‰Bçš„å³å­æ ‘ï¼Œå…¶ä»–èŠ‚ç‚¹ä¸å˜ï¼ŒBæˆä¸ºæ–°çš„æ ¹èŠ‚ç‚¹ã€‚
 		* 
 		*			A					B
 		*		   /				   / \
@@ -56,7 +56,7 @@ public:
 	void __leftRotate(BinaryTreeNode<T>*& p_node, BinaryTreeNode<T>* p_parent, bool node_is_left_child)
 	{
 		/*
-		*	×óĞı×ª,A×ó(ÄæÊ±Õë)Ğı×ª³ÉÎªBµÄ×ÓÊ÷¡£BµÄ×ó×ÓÊ÷½«Ö¸ÏòA£¬ÒªÏÈÓÃAµÄÓÒ×ÓÊ÷Ö¸ÏòBµÄ×ó×ÓÊ÷£¬ÔÙÈÃBµÄ×ó×ÓÊ÷Ö¸ÏòA,·ñÔò»á¶ªÊ§µôBµÄÓÒ×ÓÊ÷£¬ÆäËû½Úµã²»±ä£¬B³ÉÎªĞÂµÄ¸ù½Úµã¡£
+		*	å·¦æ—‹è½¬,Aå·¦(é€†æ—¶é’ˆ)æ—‹è½¬æˆä¸ºBçš„å­æ ‘ã€‚Bçš„å·¦å­æ ‘å°†æŒ‡å‘Aï¼Œè¦å…ˆç”¨Açš„å³å­æ ‘æŒ‡å‘Bçš„å·¦å­æ ‘ï¼Œå†è®©Bçš„å·¦å­æ ‘æŒ‡å‘A,å¦åˆ™ä¼šä¸¢å¤±æ‰Bçš„å³å­æ ‘ï¼Œå…¶ä»–èŠ‚ç‚¹ä¸å˜ï¼ŒBæˆä¸ºæ–°çš„æ ¹èŠ‚ç‚¹ã€‚
 		*		A						B
 		*		 \					   / \
 		*		  B			->		  A   C
@@ -73,8 +73,8 @@ public:
 	void __handleLeftLeftUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
 	{
 		/*
-		* ½ÚµãÊÇÒòÎªĞÂ½Úµã²åÈëÁËÆä×ó×ÓÊ÷µÄ×ó×ÓÊ÷¶øÊ§ºâ¡£
-		* ÓÒĞıÊ§ºâ½ÚµãÒ»´Î¼´¿É´¦Àí¡£
+		* èŠ‚ç‚¹æ˜¯å› ä¸ºæ–°èŠ‚ç‚¹æ’å…¥äº†å…¶å·¦å­æ ‘çš„å·¦å­æ ‘è€Œå¤±è¡¡ã€‚
+		* å³æ—‹å¤±è¡¡èŠ‚ç‚¹ä¸€æ¬¡å³å¯å¤„ç†ã€‚
 		*		A							B
 		*	   / \						   / \
 		*     B   E					      C   A
@@ -82,7 +82,7 @@ public:
 		*   C   D						F   D   E
 		*  /
 		* F
-		* FÎŞÂÛÔÚCµÄ×ó±ß»¹ÊÇÓÒ±ß£¬¶¼ÕâÑù´¦Àí
+		* Fæ— è®ºåœ¨Cçš„å·¦è¾¹è¿˜æ˜¯å³è¾¹ï¼Œéƒ½è¿™æ ·å¤„ç†
 		*/
 		__rightRotate(p_unbalance_node, p_parent, p_parent ? p_unbalance_node == p_parent->_p_left_child : false);
 	}
@@ -90,8 +90,8 @@ public:
 	void __handleRightRightUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
 	{
 		/*
-		* ½ÚµãÊÇÒòÎªĞÂ½Úµã²åÈëÁËÆäÓÒ×ÓÊ÷µÄÓÒ×ÓÊ÷¶øÊ§ºâ¡£
-		* ×óĞıÊ§ºâ½ÚµãÒ»´Î¼´¿É´¦Àí¡£
+		* èŠ‚ç‚¹æ˜¯å› ä¸ºæ–°èŠ‚ç‚¹æ’å…¥äº†å…¶å³å­æ ‘çš„å³å­æ ‘è€Œå¤±è¡¡ã€‚
+		* å·¦æ—‹å¤±è¡¡èŠ‚ç‚¹ä¸€æ¬¡å³å¯å¤„ç†ã€‚
 		*		A							B
 		*	   / \						   / \
 		*     E   B						  A   C
@@ -99,7 +99,7 @@ public:
 		*       D   C					E   D   F
 		*			 \
 		*			  F
-		* FÎŞÂÛÔÚCµÄ×ó±ß»¹ÊÇÓÒ±ß£¬¶¼ÕâÑù´¦Àí
+		* Fæ— è®ºåœ¨Cçš„å·¦è¾¹è¿˜æ˜¯å³è¾¹ï¼Œéƒ½è¿™æ ·å¤„ç†
 		*/
 		__leftRotate(p_unbalance_node, p_parent, p_parent ? p_unbalance_node == p_parent->_p_left_child : false);
 	}
@@ -107,8 +107,8 @@ public:
 	void __handleLeftRightUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
 	{
 		/*
-		* ½ÚµãÊÇÒòÎªĞÂ½Úµã²åÈëÁËÆä×ó×ÓÊ÷µÄÓÒ×ÓÊ÷¶øÊ§ºâ¡£
-		* ÏÈ×óĞıBÊ¹Ö®³ÉÎªÒ»¸öLLÊ§ºâµÄÊ÷,È»ºóÓÒĞıA¡£
+		* èŠ‚ç‚¹æ˜¯å› ä¸ºæ–°èŠ‚ç‚¹æ’å…¥äº†å…¶å·¦å­æ ‘çš„å³å­æ ‘è€Œå¤±è¡¡ã€‚
+		* å…ˆå·¦æ—‹Bä½¿ä¹‹æˆä¸ºä¸€ä¸ªLLå¤±è¡¡çš„æ ‘,ç„¶åå³æ—‹Aã€‚
 		* 
 		*		A							A							D
 		*	   / \						   / \						   / \
@@ -125,8 +125,8 @@ public:
 	void __handleRightLeftUnbalance(BinaryTreeNode<T>* p_unbalance_node, BinaryTreeNode<T>* p_parent)
 	{
 		/*
-		* ½ÚµãÊÇÒòÎªĞÂ½Úµã²åÈëÁËÆäÓÒ×ÓÊ÷µÄ×ó×ÓÊ÷¶øÊ§ºâ¡£
-		* ÏÈÓÒĞıB£¬Ê¹Ö®³ÉÎªRRÊ§ºâµÄÊ÷£¬ÔÙ×óĞıA¼´¿É¡£
+		* èŠ‚ç‚¹æ˜¯å› ä¸ºæ–°èŠ‚ç‚¹æ’å…¥äº†å…¶å³å­æ ‘çš„å·¦å­æ ‘è€Œå¤±è¡¡ã€‚
+		* å…ˆå³æ—‹Bï¼Œä½¿ä¹‹æˆä¸ºRRå¤±è¡¡çš„æ ‘ï¼Œå†å·¦æ—‹Aå³å¯ã€‚
 		*			A						A							C
 		*		   / \					   / \						   / \
 		*		  F	  B					  F   C						  A	  B
@@ -149,8 +149,8 @@ public:
 			BinaryTreeNode<T>* p_node = tree_arr[i];
 			if (this->height(p_node->_p_left_child) - this->height(p_node->_p_right_child) > 1)
 			{
-				/* ÒòÎªAVLÊ÷ÊÇ¸ß¶ÈÏà²î1ÒÔÄÚµÄ¶ş²æËÑË÷Ê÷£¬ÓÖÒòÎªÊ§ºâ½Úµã²»¿ÉÄÜ»áÊÇÒ¶×Ó½Úµã£¬
-				¶ÔÓÚÊ§ºâ½ÚµãÀ´Ëµ£¬¿ÉÒÔÓÃË³Ğò´æ´¢µÄ·½·¨¼ÆËã³öÆä¸¸½Úµã */
+				/* å› ä¸ºAVLæ ‘æ˜¯é«˜åº¦ç›¸å·®1ä»¥å†…çš„äºŒå‰æœç´¢æ ‘ï¼Œåˆå› ä¸ºå¤±è¡¡èŠ‚ç‚¹ä¸å¯èƒ½ä¼šæ˜¯å¶å­èŠ‚ç‚¹ï¼Œ
+				å¯¹äºå¤±è¡¡èŠ‚ç‚¹æ¥è¯´ï¼Œå¯ä»¥ç”¨é¡ºåºå­˜å‚¨çš„æ–¹æ³•è®¡ç®—å‡ºå…¶çˆ¶èŠ‚ç‚¹ */
 				BinaryTreeNode<T>* p_parent = i > 0 ? tree_arr[(i - 1) / 2] : nullptr;
 				if (this->height(p_node->_p_left_child->_p_left_child) > this->height(p_node->_p_left_child->_p_right_child))
 					__handleLeftLeftUnbalance(p_node, p_parent);
@@ -210,7 +210,7 @@ public:
 				bool is_left_child = p_parent ? p_tree == p_parent->_p_left_child : false;
 				if (p_tree->_p_left_child && p_tree->_p_right_child)
 				{
-					/* Èç¹ûÖ»×óÓÒ×ÓÊ÷¶¼ÓĞ, ÕÒµ½×ó×ÓÊ÷µÄ×îÓÒ½Úµã£¬Ìæ»»µôÉ¾³ı½Úµã */
+					/* å¦‚æœåªå·¦å³å­æ ‘éƒ½æœ‰, æ‰¾åˆ°å·¦å­æ ‘çš„æœ€å³èŠ‚ç‚¹ï¼Œæ›¿æ¢æ‰åˆ é™¤èŠ‚ç‚¹ */
 					BinaryTreeNode<T>* p_tmp_1 = p_tree;
 					BinaryTreeNode<T>* p_tmp_2 = p_tree->_p_left_child;
 					while (p_tmp_2->_p_right_child)
@@ -225,17 +225,17 @@ public:
 				}
 				else if (nullptr == p_tree->_p_left_child && nullptr == p_tree->_p_right_child)
 				{
-					/* Èç¹ûÊÇÒ¶×Ó½Úµã, É¾³ı¼È¿É */
+					/* å¦‚æœæ˜¯å¶å­èŠ‚ç‚¹, åˆ é™¤æ—¢å¯ */
 					__relinkChild(nullptr, p_parent, is_left_child);
 				}
 				else if (nullptr == p_tree->_p_left_child)
 				{
-					/* Èç¹ûÖ»ÓĞ×ó×ÓÊ÷, ½«×ó×ÓÊ÷Ìæ»»µôÉ¾³ı½Úµã¼´¿É */
+					/* å¦‚æœåªæœ‰å·¦å­æ ‘, å°†å·¦å­æ ‘æ›¿æ¢æ‰åˆ é™¤èŠ‚ç‚¹å³å¯ */
 					__relinkChild(p_tree->_p_left_child, p_parent, is_left_child);
 				}
 				else
 				{
-					/* Èç¹ûÖ»ÓĞÓÒ×ÓÊ÷, ½«×ó×ÓÊ÷Ìæ»»µôÉ¾³ı½Úµã¼´¿É */
+					/* å¦‚æœåªæœ‰å³å­æ ‘, å°†å·¦å­æ ‘æ›¿æ¢æ‰åˆ é™¤èŠ‚ç‚¹å³å¯ */
 					__relinkChild(p_tree->_p_right_child, p_parent, is_left_child);
 				}
 				p_tree->_p_left_child = nullptr;
