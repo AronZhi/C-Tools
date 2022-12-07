@@ -1,8 +1,9 @@
 #include <vector>
 #include <map>
 #include "../String/Print.hpp"
+#include "../String/Data.hpp"
 
-int main()
+void testPrint()
 {
     wprint(1, 2, 'a', "hello");
     std::vector<int> v{1,2,3};
@@ -11,5 +12,22 @@ int main()
     m['a'] = 1;
     m['b'] = 2;
     wprint(m);
+}
+
+void testReplace()
+{
+    std::string s("C:\\users\\test\\downloads\\test.txt");
+    replace(s, '\\', '/');
+    wprint(s);
+    replace(s, "test", "what");
+    wprint(s);
+    replace(s, "what", "AA");
+    wprint(s);
+}
+
+
+int main()
+{
+    testReplace();
     return 0;
 }

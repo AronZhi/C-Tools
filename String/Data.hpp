@@ -31,4 +31,27 @@ void split(const std::string& src, const std::string& delimiter, std::vector<std
 	ret = { std::sregex_token_iterator(src.begin(), src.end(), re, -1),std::sregex_token_iterator() };
 }
 
+void replace(std::string& str, char target_char, char replace_char)
+{
+	for (std::string::iterator it = str.begin(); it != str.end(); ++it)
+	{
+		if (*it == target_char)
+		{
+			*it = replace_char;
+		}
+	}
+}
+
+void replace(std::string& src, const std::string& target_str, const std::string& replace_str)
+{
+	std::string::size_type pos = 0;
+	std::string::size_type target_size = target_str.length();
+	std::string::size_type replace_size = replace_str.length();
+	while((pos = src.find(target_str, pos)) != std::string::npos)
+	{
+		src.replace(pos, target_size, replace_str);
+		pos += replace_size;
+	}
+}
+
 #endif // DATA_HPP

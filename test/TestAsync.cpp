@@ -22,7 +22,7 @@ int getRand(int min, int max)
     return (rd() % (max - min + 1)) + min;
 }
 
-void test_messsageQueu()
+void testMesssageQueu()
 {
     MessageQueue<int> msg_queue;
     std::atomic_bool stop(false);
@@ -59,7 +59,7 @@ void test_messsageQueu()
     getchar();
 }
 
-void test_thread()
+void testThread()
 {
     ThreadItem t1(new TestWork());
     t1.run();
@@ -71,6 +71,6 @@ void test_thread()
 
 int main()
 {
-    test_thread();
+    testThread();
     return 0;
 }
