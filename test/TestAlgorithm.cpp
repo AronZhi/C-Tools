@@ -26,8 +26,16 @@ void testMergeSort()
     wprint(vec);
 }
 
+void testMessUpOrder()
+{
+    std::vector<int> a {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+    messUpOrder<int>(a);
+    wprint(a);
+}
+
+
 int main()
 {
-    testMergeSort();
+    testMessUpOrder();
     return 0;
 }

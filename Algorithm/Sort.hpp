@@ -1,8 +1,11 @@
 #ifndef SORT_H
 #define SORT_H
+
 #include <Windows.h>
 #include <assert.h>
 #include <vector>
+#include <random>
+
 /*
 template <class T>
 void _QuickSortRecursive(std::vector<T>& input, int32_t start, int32_t end)
@@ -125,6 +128,22 @@ void mergeSort(std::vector<T>& input)
 	std::vector<T> tmp;
 	tmp.resize(input.size());
 	_mergeSortRecursive(input, tmp, 0, input.size() - 1);
+}
+
+template <class T>
+void messUpOrder(std::vector<T>& input)
+{
+	std::random_device rd;
+	auto random = [](std::random_device& rd, int min, int max)-> int { return (rd() % (max - min + 1)) + min; };
+	int i = input.size() - 1;
+	T tmp;
+	for (;i > 0; --i)
+	{
+		int select = random(rd, 0, i - 1);
+		tmp = input[i];
+		input[i] = input[select];
+		input[select] = tmp;
+	}
 }
 
 #endif//SORT_H
