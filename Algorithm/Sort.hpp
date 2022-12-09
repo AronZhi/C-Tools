@@ -131,7 +131,7 @@ void mergeSort(std::vector<T>& input)
 }
 
 template <class T>
-void messUpOrder(std::vector<T>& input)
+void shuffle(std::vector<T>& input)
 {
 	std::random_device rd;
 	auto random = [](std::random_device& rd, int min, int max)-> int { return (rd() % (max - min + 1)) + min; };
