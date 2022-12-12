@@ -36,7 +36,7 @@ void testMesssageQueu()
             msg_queue.push(p);
             Sleep(n * 10);
         }
-        });
+    });
 
     std::thread pop_thread([&]() {
         while (!stop.load())
@@ -52,7 +52,7 @@ void testMesssageQueu()
             std::shared_ptr<int> p = msg_queue.pop();
             wprint("continue pop: ", *p);
         }
-        });
+    });
 
     push_thread.join();
     pop_thread.join();
