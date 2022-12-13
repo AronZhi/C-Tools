@@ -22,7 +22,7 @@ private:
 	SingleInst& operate = (const SingleInst&) = delete;
 
 private:
-	static std::unique_ptr<T> __inst;
+	static std::unique_ptr<T> __inst; // 需要在cpp文件进行初始化 std::unique_ptr<T> T::_inst = nullptr, 否则链接错误. 
 };
 
 /*
