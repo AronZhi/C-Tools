@@ -22,8 +22,11 @@ private:
 	SingleInst& operate = (const SingleInst&) = delete;
 
 private:
-	static std::unique_ptr<T> __inst; // 需要在cpp文件进行初始化 std::unique_ptr<T> T::_inst = nullptr, 否则链接错误. 
+	static std::unique_ptr<T> __inst; 
 };
+
+template <typename T>
+static std::unique_ptr<T> T::__inst; // 非模板的情况下需要在cpp文件进行初始化 std::unique_ptr<T> T::_inst(nullptr) 否则链接错误. 
 
 /*
 C++11之后静态变量初始化是线程安全的
@@ -46,5 +49,8 @@ private:
 	SingleInst(const SingleInst&) = delete;
 	SingleInst& operate = (const SingleInst&) = delete;
 };
+
+template <typename T>
+static std::unique_ptr<T> T::__inst;
 */
 #endif // SINGLE_INST
