@@ -21,7 +21,7 @@ protected:
 	Singleton(const Singleton&) = delete;
 	Singleton& operator = (const Singleton&) = delete;
 
-protected	:
+protected:
 	static std::unique_ptr<T> __inst; 
 };
 
