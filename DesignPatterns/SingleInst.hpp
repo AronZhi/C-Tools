@@ -19,7 +19,7 @@ public:
 private:
 	SingleInst() = default;
 	SingleInst(const SingleInst&) = delete;
-	SingleInst& operate = (const SingleInst&) = delete;
+	SingleInst& operator = (const SingleInst&) = delete;
 
 private:
 	static std::unique_ptr<T> __inst; 
