@@ -1,5 +1,5 @@
 #include "../String/Print.hpp"
-#include "../DesignPatterns/SingleInst.hpp"
+#include "../DesignPatterns/Singleton.hpp"
 
 class A
 {
