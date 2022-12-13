@@ -13,7 +13,7 @@ template <class T>
 class MessageQueue
 {
 protected:
-	std::queue<std::unique_ptr<T>> _queue;
+	std::queue<std::shared_ptr<T>> _queue;
 	std::mutex _mtx;
 	std::condition_variable _signal;
 
@@ -31,7 +31,7 @@ public:
 		{
 			memset(p, 0, sizeof(T));
 			memcpy(p, pMsg, size);
-			std::unique_ptr<T> queue_msg(p);
+			std::shared_ptr<T> queue_msg(p);
 			do
 			{
 				std::unique_lock<std::mutex> lock(_mtx);
@@ -43,12 +43,12 @@ public:
 		return false;
 	}
 
-	std::unique_ptr<T> pop()
+	std::shared_ptr<T> pop()
 	{
 		std::unique_lock<std::mutex> lock(_mtx);
 		while (_queue.empty())
 			_signal.wait(lock);
-		std::unique_ptr ret(std::move(_queue.front()));
+		std::shared_ptr ret(std::move(_queue.front()));
 		_queue.pop();
 		return ret;
 	}
