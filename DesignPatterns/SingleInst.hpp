@@ -6,51 +6,48 @@
 #include <memory>
 
 template <typename T>
-class SingleInst
+class Singleton
 {
 public:
-	static T& get_instance()
+	static T& getInstance()
 	{
 		static std::once_flag flag;
 		std::call_once(flag, [&]() { __inst.reset(new T); });
 		return *__inst;
 	}
 
-private:
-	SingleInst() = default;
-	SingleInst(const SingleInst&) = delete;
-	SingleInst& operator = (const SingleInst&) = delete;
+protected:
+	Singleton() = default;
+	Singleton(const Singleton&) = delete;
+	Singleton& operator = (const Singleton&) = delete;
 
-private:
+protected	:
 	static std::unique_ptr<T> __inst; 
 };
 
 template <typename T>
-static std::unique_ptr<T> T::__inst; // 非模板的情况下需要在cpp文件进行初始化 std::unique_ptr<T> T::_inst(nullptr) 否则链接错误. 
+std::unique_ptr<T> Singleton<T>::__inst(nullptr); // 非模板的情况下需要在cpp文件进行初始化 std::unique_ptr<T> T::_inst(nullptr) 否则链接错误. 
 
 /*
 C++11之后静态变量初始化是线程安全的
 使用静态局部变量能延迟构造实现懒汉式单例
 
 template <typename T> 
-class SingleInst
+class Singleton
 {
 public:
-	static T& GetInstance()
+	static T& getInstance()
 	{		
 		static T t;
 		return t;
 	}
 
-	~SingleInst() = default;
+	~Singleton() = default;
 
-private:
-	SingleInst() = default;
-	SingleInst(const SingleInst&) = delete;
-	SingleInst& operate = (const SingleInst&) = delete;
+protected:
+	Singleton() = default;
+	Singleton(const Singleton&) = delete;
+	Singleton& operate = (const Singleton&) = delete;
 };
-
-template <typename T>
-static std::unique_ptr<T> T::__inst;
 */
 #endif // SINGLE_INST
