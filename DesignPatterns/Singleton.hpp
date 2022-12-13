@@ -1,5 +1,5 @@
-#ifndef SINGLE_INST
-#define SINGLE_INST
+#ifndef SINGLETON
+#define SINGLETON
 
 /*使用once_flag和call_oncel来保证线程安全*/
 #include <mutex>
@@ -50,4 +50,4 @@ protected:
 	Singleton& operator = (const Singleton&) = delete;
 };
 */
-#endif // SINGLE_INST
+#endif // SINGLETON
