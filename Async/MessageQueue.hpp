@@ -13,7 +13,7 @@ template <class T>
 class MessageQueue
 {
 protected:
-	std::queue<std::shared_ptr<T>> _queue;
+	std::queue<std::unique_ptr<T>> _queue;
 	std::mutex _mtx;
 	std::condition_variable _signal;
 
@@ -26,15 +26,16 @@ public:
 
 	bool push(T* pMsg)
 	{
-		T* p = (T*)malloc(sizeof(T));
+		T* p = new T();
 		if (p)
 		{
-			memcpy(p, pMsg, sizeof(T));
-			std::shared_ptr<T> queue_msg(p);
+			memset(p, 0, sizeof(T));
+			memcpy(p, pMsg, size);
+			std::unique_ptr<T> queue_msg(p);
 			do
 			{
 				std::unique_lock<std::mutex> lock(_mtx);
-				_queue.push(queue_msg);
+				_queue.push(std::move(queue_msg));
 			} while (false);
 			_signal.notify_all();
 			return true;
@@ -42,17 +43,13 @@ public:
 		return false;
 	}
 
-	std::shared_ptr<T> pop()
+	std::unique_ptr<T> pop()
 	{
-		std::shared_ptr<T> ret(nullptr);
-		do
-		{
-			std::unique_lock<std::mutex> lock(_mtx);
-			while (_queue.empty())
-				_signal.wait(lock);
-			ret = _queue.front();
-			_queue.pop();
-		} while (false);
+		std::unique_lock<std::mutex> lock(_mtx);
+		while (_queue.empty())
+			_signal.wait(lock);
+		std::unique_ptr ret(std::move(_queue.front()));
+		_queue.pop();
 		return ret;
 	}
 };
