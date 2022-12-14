@@ -13,15 +13,23 @@ template <class T>
 class MessageQueue
 {
 protected:
+	bool _run;
 	std::queue<std::shared_ptr<T>> _queue;
 	std::mutex _mtx;
 	std::condition_variable _signal;
 
 public:
-	bool empty()
+	MessageQueue() : _run(true) {}
+
+	void stop()
 	{
-		std::unique_lock<std::mutex> lock(_mtx);
-		return _queue.empty();
+		std::shared_ptr<T> queue_msg(nullptr);
+		_run = false;
+		do
+		{
+			std::unique_lock<std::mutex> lock(_mtx);
+			_queue.push(std::move(queue_msg));
+		} while (false);
 	}
 
 	bool push(T* pMsg)
@@ -46,11 +54,20 @@ public:
 	std::shared_ptr<T> pop()
 	{
 		std::unique_lock<std::mutex> lock(_mtx);
-		while (_queue.empty())
+		while (_run && _queue.empty())
 			_signal.wait(lock);
-		std::shared_ptr ret(std::move(_queue.front()));
-		_queue.pop();
-		return ret;
+
+		if (_queue.empty())
+		{
+			std::shared_ptr ret(nullptr);
+			return ret;
+		}
+		else
+		{
+			std::shared_ptr ret(std::move(_queue.front()));
+			_queue.pop();
+			return ret;
+		}
 	}
 };
 

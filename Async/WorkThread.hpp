@@ -15,17 +15,22 @@ protected:
 public:
 	WorkThread() : _thread_run(false), _thread_exist(false), _thread(nullptr) {}
 
-	virtual ~WorkThread() { stop(); }
+	virtual ~WorkThread()
+	{
+		stop();
+		join();
+	}
 
 	inline bool isRunning() { return _thread_run.load(); }
 
-    inline void quitWithinThread() { _thread_run.store(false); }
-
-	void stop(bool force_stop = false)
+	void stop()
 	{
-		if (force_stop)
-			_thread_run.store(false);
+		bool run = true;
+		_thread_run.compare_exchange_strong(run, false);
+	}
 
+	void join()
+	{
 		if (_thread_exist.load())
 		{
 			_thread->join();
@@ -53,6 +58,7 @@ public:
 			}
 			catch (std::exception& e)
 			{
+				_thread_run.store(false);
 				if (_thread.get())
 				{
 					_thread.reset(nullptr);
