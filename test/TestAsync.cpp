@@ -1,19 +1,43 @@
 #include <Windows.h>
 #include "../String/print.hpp"
 #include "../Async/MessageQueue.hpp"
-#include "../Async/ThreadItem.hpp"
-#include "../Async/ThreadWork.hpp"
+#include "../Async/WorkThread.hpp"
 #include <random>
 
-class TestWork : public ThreadWork
+class A : public WorkThread
 {
-    void work()
+public:
+    void run() override
     {
-        wprint("input q to quit");
-        char c = getchar();
-        if (c == 'q')
-            quit(true);
-    }
+		bool existed = false;
+		if (_thread_exist.compare_exchange_strong(existed, true))
+		{
+			try
+			{
+				_thread.reset(new std::thread([&]() {
+					_thread_run.store(true);
+                    char c = 0;
+					while (_thread_run.load())
+					{
+                        wprint("input q to quit");
+						c = getchar();
+                        if (c == 'q')
+                        {
+                            quitWithinThread();
+                        }
+					}
+				}));
+			}
+			catch (std::exception& e)
+			{
+				if (_thread.get())
+				{
+					_thread.reset(nullptr);
+					_thread_exist.store(false);
+				}
+			}
+		}
+	}
 };
 
 int getRand(int min, int max)
@@ -61,12 +85,14 @@ void testMesssageQueu()
 
 void testThread()
 {
-    ThreadItem t1(new TestWork());
-    t1.run();
-    t1.stop();
-    wprint("run again");
-    t1.run();
-    t1.stop();
+    /*
+    std::unique_ptr<A> pa(new A());
+    pa->run();
+    pa->stop();
+    */
+    A a;
+    a.run();
+    a.stop();
 }
 
 int main()

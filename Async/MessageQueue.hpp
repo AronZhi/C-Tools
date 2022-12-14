@@ -30,7 +30,7 @@ public:
 		if (p)
 		{
 			memset(p, 0, sizeof(T));
-			memcpy(p, pMsg, size);
+			memcpy(p, pMsg, sizeof(T));
 			std::shared_ptr<T> queue_msg(p);
 			do
 			{
