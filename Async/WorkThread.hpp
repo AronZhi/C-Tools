@@ -68,6 +68,22 @@ public:
 		}
 	}
 	*/
+
+	virtual void reRun()
+	{
+		if (!_thread_run.load())
+		{
+			join();
+			run();
+		}
+	}
+
+	virtual void reRunEx()
+	{
+		stop();
+		join();
+		run();
+	}
 };
 
 #endif // WORK_THREAD
