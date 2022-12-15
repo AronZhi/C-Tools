@@ -29,7 +29,7 @@ public:
 		_thread_run.compare_exchange_strong(run, false);
 	}
 
-	void join()
+	virtual void join()
 	{
 		if (_thread_exist.load())
 		{
