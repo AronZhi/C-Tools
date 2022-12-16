@@ -23,13 +23,12 @@ public:
 
 	void stop()
 	{
-		std::shared_ptr<T> queue_msg(nullptr);
-		_run = false;
 		do
 		{
 			std::unique_lock<std::mutex> lock(_mtx);
-			_queue.push(std::move(queue_msg));
+			_run = false;
 		} while (false);
+		_signal.notify_all();
 	}
 
 	bool push(T* pMsg)
