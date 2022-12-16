@@ -56,7 +56,7 @@ public:
 					}
 				}));
 			}
-			catch (std::exception& e)
+			catch (...)
 			{
 				_thread_run.store(false);
 				if (_thread.get())

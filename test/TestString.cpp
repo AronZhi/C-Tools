@@ -25,9 +25,22 @@ void testReplace()
     wprint(s);
 }
 
+void testStartWith()
+{
+    std::string s1("abc123");
+    std::string s2("abc");
+    std::string s3("adc");
+    wprint(startWith(s1, s2));
+    wprint(startWith(s1, s3));
+
+    std::string s4("123");
+    wprint(endWith(s1, s4));
+    wprint(endWith(s1, s3));
+}
+
 
 int main()
 {
-    testReplace();
+    testStartWith();
     return 0;
 }

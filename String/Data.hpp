@@ -54,4 +54,14 @@ void replace(std::string& src, const std::string& target_str, const std::string&
 	}
 }
 
+inline bool startWith(const std::string& src, const std::string& target)
+{
+	return src.find(target) == 0 ? true : false;
+}
+
+inline bool endWith(const std::string& src, const std::string& target)
+{
+	return (src.rfind(target) + target.length()) == src.length() ? true : false;
+}
+
 #endif // DATA_HPP
