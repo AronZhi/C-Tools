@@ -42,7 +42,10 @@ public:
 			do
 			{
 				std::unique_lock<std::mutex> lock(_mtx);
-				_queue.push(std::move(queue_msg));
+				if (_run)
+					_queue.push(std::move(queue_msg));
+				else
+					return false;
 			} while (false);
 			_signal.notify_all();
 			return true;
