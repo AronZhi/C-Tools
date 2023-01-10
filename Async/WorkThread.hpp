@@ -16,73 +16,76 @@ public:
 	WorkThread() : _thread_run(false), _thread_exist(false), _thread(nullptr) {}
 
 	virtual ~WorkThread()
-	{
+	{ 
 		stop();
 		join();
 	}
 
 	inline bool isRunning() { return _thread_run.load(); }
 
-	void stop()
+	void stop() 
 	{
 		bool run = true;
 		_thread_run.compare_exchange_strong(run, false);
 	}
 
-	virtual void join()
+	void join()
 	{
 		if (_thread_exist.load())
 		{
-			_thread->join();
-			_thread.reset(nullptr);
+			if (_thread)
+			{
+				_thread->join();
+				_thread.reset(nullptr);
+			}
 			_thread_exist.store(false);
 		}
 	}
 
-	virtual void run() = 0;
-	/*
-    void run() 
+	void run()
 	{
 		bool existed = false;
 		if (_thread_exist.compare_exchange_strong(existed, true))
 		{
 			try
 			{
+				_thread_run.store(true);
 				_thread.reset(new std::thread([&]() {
 					_thread_run.store(true);
-					while (_thread_run.load())
-					{
-						// TODO
-					}
+					work();
 				}));
 			}
 			catch (...)
 			{
-				_thread_run.store(false);
-				if (_thread.get())
-				{
-					_thread.reset(nullptr);
-					_thread_exist.store(false);
-				}
+				onException();
 			}
 		}
 	}
-	*/
 
-	virtual void reRun()
-	{
-		if (!_thread_run.load())
-		{
-			join();
-			run();
-		}
-	}
-
-	virtual void reRunEx()
+	void reRun()
 	{
 		stop();
 		join();
 		run();
+	}
+
+protected:
+	virtual void work() = 0;
+	/* 
+	void work()
+	{
+		while (_thread_run.load())
+		{
+			// TODO
+		}
+	}
+	*/
+
+	virtual void onException()
+	{
+		_thread_exist.store(false);
+		_thread.reset(nullptr);
+		_thread_run.store(false);
 	}
 };
 
