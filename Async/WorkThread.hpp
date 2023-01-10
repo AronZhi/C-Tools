@@ -49,7 +49,6 @@ public:
 		{
 			try
 			{
-				_thread_run.store(true);
 				_thread.reset(new std::thread([&]() {
 					_thread_run.store(true);
 					work();
