@@ -83,9 +83,9 @@ protected:
 
 	virtual void onException()
 	{
+		_thread_run.store(false);
 		_thread_exist.store(false);
 		_thread.reset(nullptr);
-		_thread_run.store(false);
 	}
 };
 
