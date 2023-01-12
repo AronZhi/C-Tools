@@ -7,8 +7,8 @@
 
 class A : public WorkThread
 {
-public:
-    void work() override
+protected:
+    void work()
     {
 		char c = 0;
         while (_thread_run.load())
@@ -64,10 +64,12 @@ void testWorkThread()
     std::unique_ptr<A> pa(new A());
     pa->run();
     pa->stop();
+    pa->join();
     */
     A a;
     a.run();
     a.stop();
+    a.join();
 }
 
 void testThreadPool()
@@ -78,6 +80,11 @@ void testThreadPool()
     pool.add([](){
         wprint(" this is a no capture lambda task");
     });
+
+    std::shared_ptr<int> pnum = std::make_shared<int>(100);
+    pool.add([pnum](){
+        wprint(" this is a capture lambda task", *pnum);
+    });
     
     Sleep(3000);
     pool.stop();
@@ -86,6 +93,6 @@ void testThreadPool()
 
 int main()
 {
-    testThreadPool();
+    testMesssageQueu();
     return 0;
 }
