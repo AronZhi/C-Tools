@@ -61,12 +61,12 @@ public:
 
 		if (_queue.empty())
 		{
-			std::shared_ptr ret(nullptr);
+			std::shared_ptr<T> ret(nullptr);
 			return ret;
 		}
 		else
 		{
-			std::shared_ptr ret(std::move(_queue.front()));
+			std::shared_ptr<T> ret(std::move(_queue.front()));
 			_queue.pop();
 			return ret;
 		}

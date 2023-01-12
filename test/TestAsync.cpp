@@ -2,40 +2,21 @@
 #include "../String/print.hpp"
 #include "../Async/MessageQueue.hpp"
 #include "../Async/WorkThread.hpp"
+#include "../Async/ThreadPool.hpp"
 #include <random>
 
 class A : public WorkThread
 {
 public:
-    void run() override
+    void work() override
     {
-		bool existed = false;
-		if (_thread_exist.compare_exchange_strong(existed, true))
+		char c = 0;
+        while (_thread_run.load())
 		{
-			try
-			{
-				_thread.reset(new std::thread([&]() {
-					_thread_run.store(true);
-                    char c = 0;
-					while (_thread_run.load())
-					{
-                        wprint("input q to quit");
-						c = getchar();
-                        if (c == 'q')
-                        {
-                            quitWithinThread();
-                        }
-					}
-				}));
-			}
-			catch (std::exception& e)
-			{
-				if (_thread.get())
-				{
-					_thread.reset(nullptr);
-					_thread_exist.store(false);
-				}
-			}
+            wprint("input q to quit");
+			c = getchar();
+            if (c == 'q')
+                stop();
 		}
 	}
 };
@@ -70,12 +51,6 @@ void testMesssageQueu()
             if ((*p % 5) == 0)
                 stop.store(true);
         }
-
-        while (!msg_queue.empty())
-        {
-            std::shared_ptr<int> p = msg_queue.pop();
-            wprint("continue pop: ", *p);
-        }
     });
 
     push_thread.join();
@@ -83,7 +58,7 @@ void testMesssageQueu()
     getchar();
 }
 
-void testThread()
+void testWorkThread()
 {
     /*
     std::unique_ptr<A> pa(new A());
@@ -95,8 +70,22 @@ void testThread()
     a.stop();
 }
 
+void testThreadPool()
+{
+    ThreadPool pool;
+    pool.run(3);
+
+    pool.add([](){
+        wprint(" this is a no capture lambda task");
+    });
+    
+    Sleep(3000);
+    pool.stop();
+    pool.join();
+}
+
 int main()
 {
-    testThread();
+    testThreadPool();
     return 0;
 }

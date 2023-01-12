@@ -1,109 +1,107 @@
 #ifndef THREAD_POOL
 #define THREAD_POOL
 
-#include <vector>
-#include <queue>
-#include <memory>
 #include <thread>
+#include <memory>
+#include <list>
+#include <functional>
+#include <queue>
 #include <mutex>
 #include <condition_variable>
-#include <future>
 #include <atomic>
-#include <functional>
-#include <stdexcept>
 
-class ThreadPool {
+class ThreadPool
+{
 public:
-    ThreadPool(size_t thread_count);
-    
-    ~ThreadPool();
+	ThreadPool() : _run(false), _thread_pool_exist(false) {}
+	
+	~ThreadPool()
+	{
+		stop();
+		join();
+	}
 
-    template<class F, class... Args>
-    auto add_task(F&& f, Args&&... args)->std::future<typename std::result_of<F(Args...)>::type>;
+	void run(int thread_count)
+	{
+		bool already_exist = false;
+		if (_thread_pool_exist.compare_exchange_strong(already_exist, true))
+		{
+			_run.store(true);
+			for (int i = 0; i < thread_count; ++i)
+			{
+				_thread_pool.emplace_back(new std::thread([&]() {
+					while (_run.load())
+					{
+						std::shared_ptr<std::function<void()>> ptask;
 
-    void stop();
+						do
+						{
+							std::unique_lock<std::mutex> lock(_task_queue_mtx);
 
-protected:
-    std::vector<std::thread> _thread_pool;
-    std::queue<std::function<void()> > _task_queue;
-    std::mutex _task_queue_mutex;
-    std::condition_variable _weak_thread_signal;
-    std::atomic_bool _run;
+							while (_run.load() && _task_queue.empty())
+								_weak_signal.wait(lock);
+
+							if (!_run.load())
+							{
+								return;
+							}
+							else
+							{
+								ptask = _task_queue.front();
+								_task_queue.pop();
+							}
+						} while (false);
+
+						(*ptask)();
+					}
+				}));
+			}
+		}
+	}
+
+	void stop()
+	{
+		bool is_running = true;
+		if (_run.compare_exchange_strong(is_running, false))
+			_weak_signal.notify_all();
+	}
+
+	void join()
+	{
+		if (_thread_pool_exist.load())
+		{
+			for (auto& pthread : _thread_pool)
+			{
+				pthread->join();
+				pthread.reset(nullptr);
+			}
+			_thread_pool.clear();
+			_thread_pool_exist.store(false);
+		}
+	}
+
+	void add(std::function<void()>&& task)
+	{
+		if (!_run.load())
+			return;
+
+		std::shared_ptr<std::function<void()>> ptask = std::make_shared<std::function<void()>>(task);
+		do
+		{
+			std::unique_lock<std::mutex> lock(_task_queue_mtx);
+			_task_queue.push(ptask);
+		} while (false);
+		_weak_signal.notify_one();
+		return;
+	}
+
+private:
+	std::atomic_bool _run;
+	std::atomic_bool _thread_pool_exist;
+	std::mutex _task_queue_mtx;
+	std::condition_variable _weak_signal;
+	std::queue<std::shared_ptr<std::function<void()>>> _task_queue;
+	std::list<std::unique_ptr<std::thread>> _thread_pool;
 };
-
-/*创建一定数量的线程*/
-ThreadPool::ThreadPool(size_t thread_count)
-: _run(true)
-{
-    for(size_t i = 0; i < thread_count; i++)
-    {
-        _thread_pool.emplace_back(
-            [this]
-            {
-                /* 线程将循环从任务队列中取任务做任务 */
-                for (;;)
-                {
-                    std::function<void()> task;
-                    {
-                        /* 进入临界区获取任务 */
-                        std::unique_lock<std::mutex> lock(this->_task_queue_mutex);
-                        while (this->_run.load() && this->_task_queue.empty())
-                            this->_weak_thread_signal.wait(lock);
-                        if (!this->_run.load())
-                            return;
-                        else
-                        {
-                            task = std::move(this->_task_queue.front());
-                            this->_task_queue.pop();
-                        }                        
-                    }
-                    /* 退出临界区执行任务 */
-                    task();
-                }
-            }
-        );
-    }
-}
-
-ThreadPool::~ThreadPool()
-{
-    stop();
-}
-
-void ThreadPool::stop()
-{
-    if (_run.load())
-    {
-        bool running = true;
-        while (!_run.compare_exchange_strong(running, false));
-        _weak_thread_signal.notify_all();
-        for (std::thread& thread : _thread_pool)
-            thread.join();
-    }
-}
-
-template<class F, class... Args>
-auto ThreadPool::add_task(F&& f, Args&&... args)->std::future<typename std::result_of<F(Args...)>::type>
-{
-    /*
-    * return 一个future, 可以用future::get()函数获得执行结果
-    */
-    using ret_type = typename std::result_of<F(Ars...)>::type;
-    auto task = std::make_shared<std::packaged_task<ret_type()>>(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
-    /*
-    * 通过std::bind生成一个新的可调用对象，可以让task延迟调用
-    * std::packaged_task允许传入一个函数或其他可调用对象，并将函数计算的结果作为异步结果传递给std::future，包括函数运行时产生的异常
-    */
-    std::future<ret_type> res = task->get_future();
-    if (_run.load())
-    {
-        /* 进入临界区，将任务添加到任务队列 */
-        std::unique_lock<std::mutex> lock(_task_queue_mutex);
-        _task_queue.emplace([task]() {*task(); });
-    }
-    /* 唤醒一个线程取执行任务 */
-    _weak_thread_signal.notify_one();
-    return res;
-}
 
 #endif // THREAD_POOL
